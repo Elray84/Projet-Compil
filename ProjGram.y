@@ -9,6 +9,13 @@
 %token <I> CST
 %token AFF
 %token OVR
+%token IF THE ELS
+%token ADD SUB MUL DIV
+%token EQU DIF INF IEQ SUP SEQ
+%token NEW
+%token RTN
+%token THI SPR
+%token RES
 
 %{#include "proj.h"     /* les definition des types et les etiquettes des noeuds */
 
@@ -100,11 +107,11 @@ ListOptMethod :
 Over :
 | OVR
 ;
-
 Expression : '(' Expression ')'
 | '(' COI Expression')'
 | Selection
 | Envoi
+| CST
 
  ;
 
@@ -119,7 +126,6 @@ Expression : '(' Expression ')'
  Envoi : ExpressionBase '.' ID
 
  ;
-
 ReturnType :
 | COI
 ;
@@ -152,6 +158,9 @@ BlockInst :
 ;
 
 /* Expression booleenne seulement presente dans un IF */
+/* bexpr : expr RELOP expr
+| '(' bexpr ')'
+; */
 /* bexpr : expr RELOP expr
 | '(' bexpr ')'
 ; */
