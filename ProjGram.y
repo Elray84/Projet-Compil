@@ -101,7 +101,24 @@ Over :
 | OVR
 ;
 
-Expression : CST ;
+Expression : '(' Expression ')'
+| '(' COI Expression')'
+| Selection
+| Envoi
+
+ ;
+
+ ExpressionBase :
+
+ ;
+
+ Selection :
+
+ ;
+
+ Envoi : ExpressionBase '.' ID
+
+ ;
 
 ReturnType :
 | COI
