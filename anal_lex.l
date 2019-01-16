@@ -43,6 +43,11 @@ int keywordOrId(char *text){
 
 }
 
+void lexError(char c) {
+	fprintf(stderr, "Token error: %c", c);
+	setError(LEXICAL_ERROR);
+}
+
 %}
 
 %%
@@ -80,4 +85,6 @@ int keywordOrId(char *text){
 
 {Sym} { return yytext[0];}
 
-{String} { return 
+{String} { yylval.S = strdup(yytext); return ID;}
+
+.  { lexError(yytext[0]); }
