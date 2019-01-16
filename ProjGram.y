@@ -62,7 +62,7 @@ Herit :
 ;
 
 
-DeclBody : LDeclFields Construct LMethods
+DeclBody : LDeclFields Construct ListOptMethods
 ;
 
 LDeclFields :
@@ -73,7 +73,7 @@ Field : ID ':' COI ';'
 | VAR ID ':' COI ';'
 ;
 
-Construct : DEF COI '(' LParamOpt ')' Super IS '{' BodyConstruct '}'
+Construct : DEF COI '(' LParamOpt ')' Super IS '{' LInstructions '}'
 ;
 
 Super :
@@ -92,14 +92,8 @@ Arg : ID
 | CST
 ;
 
-BodyConstruct :
-|Bloc
-;
 
-LMethods :
-| Bloc;
-
-ListOptMethod :
+ListOptMethods :
 | Over DEF ID '('LParamOpt')'  ':' COI AFF Expression ';'
 | Over DEF ID '('LParamOpt')' ReturnType IS '{'Bloc'}'
 ;
@@ -107,6 +101,12 @@ ListOptMethod :
 Over :
 | OVR
 ;
+
+LInstructions :
+| LInstructions Instruction;
+
+Instruction : Expression ';' ;
+
 Expression : '(' Expression ')'
 | '(' COI Expression')'
 | Selection
