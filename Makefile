@@ -10,7 +10,7 @@ test_lex: gram_y.h test_lex.o lex_l.o
 
 bison : gram_y.o lex_l.o
     $(CC) -o bison gram_y.o lex_l.o $(LDFLAGS)
-    
+
 # Si absent lance yacc et fait "mv y.tab.c tp.c" ce qui ecrase notre fichier.
 proj.c :
 	echo ''
@@ -30,11 +30,12 @@ gram_y.h gram_y.c : ProjGram.y proj.h
 
 test_lex.o : test_lex.c proj.h gram_y.h
 	$(CC) $(CFLAGS) -c test_lex.c
-	
+
 lex_l.c : proj.h gram_y.h anal_lex.l
     flex --yylineno -olex_l.c anal_lex.l
 
 .Phony: clean bison
+# commande bison : bison -v -b gram_y -d ProjGram.y
 
 clean:
 	rm -f *~ tp.exe* ./tp *.o lex_l.o gram_y.* test_lex gram_y.output
