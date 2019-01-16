@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 Chiffre [0-9]
 Entier {Chiffre}+
 Lettre [a-zA-Z]
@@ -79,4 +78,6 @@ int keywordOrId(char *text){
 
 ":=" { return AFF;}
 
-{Sym} {return yytext[0];}
+{Sym} { return yytext[0];}
+
+{String} { return 
