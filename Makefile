@@ -1,6 +1,6 @@
 OBJ=proj.o lex_l.o gram_y.o
 CC=gcc
-CFLAGS=-Wall -ansi -I./ -g
+CFLAGS=-Wall -std=c99 -I./ -g
 LDFLAGS= -g -lfl
 proj : $(OBJ)
 	$(CC) -o proj $(OBJ) $(LDFLAGS)

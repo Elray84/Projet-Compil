@@ -1,20 +1,22 @@
 Chiffre [0-9]
 Entier {Chiffre}+
 Lettre [a-zA-Z]
-LC ({Lettre}|{Chiffre}) /* Lettre ou chiffre */
-COI [A-Z]{LC}* /* Classe ou objet isolé */
+LC ({Lettre}|{Chiffre})
+COI [A-Z]{LC}*
 Id [a-z]{LC}*
 Delim [ \n\t\r]
 Star "*"
-NoStar ^{Star}
+NoStar [^\*]
 Slash "/"
-NoStarOrSlash {NoStar}\{Slash}
+NoStarOrSlash [^\*\/]
 StarPlus {Star}+
 Com {Slash}{Star}({NoStar}*{StarPlus}{NoStarOrSlash})*{NoStar}*{StarPlus}{Slash}
+Sym [(),;:{}.]
+String 
 
 %{
-#include "tp.h"
-#include "tp_y.h"
+#include "proj.h"
+#include "gram_y.h"
 #include <string.h>
 
 extern YYSTYPE yylval;
@@ -74,3 +76,7 @@ int keywordOrId(char *text){
 "<=" { return IEQ; }
 
 ":=" { return AFF;}
+
+{Sym} {return yytext[0];}
+
+
