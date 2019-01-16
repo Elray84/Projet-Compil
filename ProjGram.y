@@ -1,15 +1,23 @@
-%token class
-%token object
+%token CLA
+%token OBJ
 %token <S> COI
-%token is
-%token var
-%token extends
+%token IS
+%token VAR
+%token EXT
 %token <S> ID
-%token def
-%token <I> CSTE
+%token DEF
+%token <I> CST
+%token AFF
+%token OVR
 
-programme : L BlockInst TODO
-;
+%{#include "proj.h"     /* les definition des types et les etiquettes des noeuds */
+
+extern int yylex();	/* fournie par Flex */
+extern void yyerror();  /* definie dans tp.c */
+%}
+
+%%
+programme : L BlockInst;
 
 
 L :
@@ -22,11 +30,10 @@ DeclStruct : DeclClass
 ;
 
 
-DeclClass :
-| class COI '(' LParamOpt ')' Herit is '{' DeclBody '}'
+DeclClass : CLA COI '(' LParamOpt ')' Herit IS '{' DeclBody '}'
 ;
 
-DeclObject : object COI is '{' DeclBody '}'
+DeclObject : OBJ COI IS '{' DeclBody '}'
 ;
 
 LParamOpt : LParam
@@ -38,17 +45,17 @@ LParam : Param ',' LParam
 ;
 
 
-Param : var ID ':' COI
+Param : VAR ID ':' COI
 | ID ':' COI
 ;
 
 
 Herit :
-| extends COI
+| EXT COI
 ;
 
 
-DeclBody : LDeclfields Construct LMethods
+DeclBody : LDeclFields Construct LMethods
 ;
 
 LDeclFields :
@@ -56,10 +63,10 @@ LDeclFields :
 ;
 
 Field : ID ':' COI ';'
-| var ID ':' COI ';'
+| VAR ID ':' COI ';'
 ;
 
-Construct : def COI '(' LParamOpt ')' Super is '{' BodyConstruct '}'
+Construct : DEF COI '(' LParamOpt ')' Super IS '{' BodyConstruct '}'
 ;
 
 Super :
@@ -75,32 +82,39 @@ LArg : Arg ',' LArg
 ;
 
 Arg : ID
-| CSTE
+| CST
 ;
 
 BodyConstruct :
-|
+|Bloc
 ;
 
+LMethods :
+| Bloc;
+
 ListOptMethod :
-| Over def ID '('LParamOpt')'  ':' COI ':=' Expression ';'
-| Over def ID '('LParamOpt')' ReturnType is '{'Bloc'}'
+| Over DEF ID '('LParamOpt')'  ':' COI AFF Expression ';'
+| Over DEF ID '('LParamOpt')' ReturnType IS '{'Bloc'}'
 ;
 
 Over :
-| override
+| OVR
 ;
 
-Expression :;
+Expression : CST ;
 
 ReturnType :
 | COI
 ;
 
-Bloc :;
+Bloc : Expression;
 
-Decl: ID AFFECT Expr ';'
 
+Decl: ID AFF Expression ';'
+;
+
+BlockInst :
+| Bloc
 ;
 
 /* expr : If bexpr Then expr Else expr

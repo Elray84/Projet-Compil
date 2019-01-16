@@ -1,0 +1,811 @@
+Nonterminals useless in grammar
+
+   ListOptMethod
+   Over
+   ReturnType
+   Decl
+
+
+Terminals unused in grammar
+
+   AFF
+   OVR
+
+
+Rules useless in grammar
+
+   38 ListOptMethod: %empty
+   39              | Over DEF ID '(' LParamOpt ')' ':' COI AFF Expression ';'
+   40              | Over DEF ID '(' LParamOpt ')' ReturnType IS '{' Bloc '}'
+
+   41 Over: %empty
+   42     | OVR
+
+   43 ReturnType: %empty
+   44           | COI
+
+   45 Decl: ID AFF Expression ';'
+
+
+Grammar
+
+    0 $accept: programme $end
+
+    1 programme: L BlockInst
+
+    2 L: %empty
+    3  | DeclStruct L
+
+    4 DeclStruct: DeclClass
+    5           | DeclObject
+
+    6 DeclClass: CLA COI '(' LParamOpt ')' Herit IS '{' DeclBody '}'
+
+    7 DeclObject: OBJ COI IS '{' DeclBody '}'
+
+    8 LParamOpt: LParam
+    9          | %empty
+
+   10 LParam: Param ',' LParam
+   11       | Param
+
+   12 Param: VAR ID ':' COI
+   13      | ID ':' COI
+
+   14 Herit: %empty
+   15      | EXT COI
+
+   16 DeclBody: LDeclFields Construct LMethods
+
+   17 LDeclFields: %empty
+   18            | Field LDeclFields
+
+   19 Field: ID ':' COI ';'
+   20      | VAR ID ':' COI ';'
+
+   21 Construct: DEF COI '(' LParamOpt ')' Super IS '{' BodyConstruct '}'
+
+   22 Super: %empty
+   23      | ':' COI '(' LArgOpt ')'
+
+   24 LArgOpt: %empty
+   25        | LArg
+
+   26 LArg: Arg ',' LArg
+   27     | Arg
+
+   28 Arg: ID
+   29    | CST
+
+   30 BodyConstruct: %empty
+   31              | Bloc
+
+   32 LMethods: %empty
+   33         | Bloc
+
+   34 Expression: CST
+
+   35 Bloc: Expression
+
+   36 BlockInst: %empty
+   37          | Bloc
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'(' (40) 6 21 23
+')' (41) 6 21 23
+',' (44) 10 26
+':' (58) 12 13 19 20 23
+';' (59) 19 20
+'{' (123) 6 7 21
+'}' (125) 6 7 21
+error (256)
+CLA (258) 6
+OBJ (259) 7
+COI (260) 6 7 12 13 15 19 20 21 23
+IS (261) 6 7 21
+VAR (262) 12 20
+EXT (263) 15
+ID (264) 12 13 19 20 28
+DEF (265) 21
+CST (266) 29 34
+AFF (267)
+OVR (268)
+
+
+Nonterminals, with rules where they appear
+
+$accept (21)
+    on left: 0
+programme (22)
+    on left: 1, on right: 0
+L (23)
+    on left: 2 3, on right: 1 3
+DeclStruct (24)
+    on left: 4 5, on right: 3
+DeclClass (25)
+    on left: 6, on right: 4
+DeclObject (26)
+    on left: 7, on right: 5
+LParamOpt (27)
+    on left: 8 9, on right: 6 21
+LParam (28)
+    on left: 10 11, on right: 8 10
+Param (29)
+    on left: 12 13, on right: 10 11
+Herit (30)
+    on left: 14 15, on right: 6
+DeclBody (31)
+    on left: 16, on right: 6 7
+LDeclFields (32)
+    on left: 17 18, on right: 16 18
+Field (33)
+    on left: 19 20, on right: 18
+Construct (34)
+    on left: 21, on right: 16
+Super (35)
+    on left: 22 23, on right: 21
+LArgOpt (36)
+    on left: 24 25, on right: 23
+LArg (37)
+    on left: 26 27, on right: 25 26
+Arg (38)
+    on left: 28 29, on right: 26 27
+BodyConstruct (39)
+    on left: 30 31, on right: 21
+LMethods (40)
+    on left: 32 33, on right: 16
+Expression (41)
+    on left: 34, on right: 35
+Bloc (42)
+    on left: 35, on right: 31 33 37
+BlockInst (43)
+    on left: 36 37, on right: 1
+
+
+State 0
+
+    0 $accept: . programme $end
+
+    CLA  shift, and go to state 1
+    OBJ  shift, and go to state 2
+
+    $default  reduce using rule 2 (L)
+
+    programme   go to state 3
+    L           go to state 4
+    DeclStruct  go to state 5
+    DeclClass   go to state 6
+    DeclObject  go to state 7
+
+
+State 1
+
+    6 DeclClass: CLA . COI '(' LParamOpt ')' Herit IS '{' DeclBody '}'
+
+    COI  shift, and go to state 8
+
+
+State 2
+
+    7 DeclObject: OBJ . COI IS '{' DeclBody '}'
+
+    COI  shift, and go to state 9
+
+
+State 3
+
+    0 $accept: programme . $end
+
+    $end  shift, and go to state 10
+
+
+State 4
+
+    1 programme: L . BlockInst
+
+    CST  shift, and go to state 11
+
+    $default  reduce using rule 36 (BlockInst)
+
+    Expression  go to state 12
+    Bloc        go to state 13
+    BlockInst   go to state 14
+
+
+State 5
+
+    3 L: DeclStruct . L
+
+    CLA  shift, and go to state 1
+    OBJ  shift, and go to state 2
+
+    $default  reduce using rule 2 (L)
+
+    L           go to state 15
+    DeclStruct  go to state 5
+    DeclClass   go to state 6
+    DeclObject  go to state 7
+
+
+State 6
+
+    4 DeclStruct: DeclClass .
+
+    $default  reduce using rule 4 (DeclStruct)
+
+
+State 7
+
+    5 DeclStruct: DeclObject .
+
+    $default  reduce using rule 5 (DeclStruct)
+
+
+State 8
+
+    6 DeclClass: CLA COI . '(' LParamOpt ')' Herit IS '{' DeclBody '}'
+
+    '('  shift, and go to state 16
+
+
+State 9
+
+    7 DeclObject: OBJ COI . IS '{' DeclBody '}'
+
+    IS  shift, and go to state 17
+
+
+State 10
+
+    0 $accept: programme $end .
+
+    $default  accept
+
+
+State 11
+
+   34 Expression: CST .
+
+    $default  reduce using rule 34 (Expression)
+
+
+State 12
+
+   35 Bloc: Expression .
+
+    $default  reduce using rule 35 (Bloc)
+
+
+State 13
+
+   37 BlockInst: Bloc .
+
+    $default  reduce using rule 37 (BlockInst)
+
+
+State 14
+
+    1 programme: L BlockInst .
+
+    $default  reduce using rule 1 (programme)
+
+
+State 15
+
+    3 L: DeclStruct L .
+
+    $default  reduce using rule 3 (L)
+
+
+State 16
+
+    6 DeclClass: CLA COI '(' . LParamOpt ')' Herit IS '{' DeclBody '}'
+
+    VAR  shift, and go to state 18
+    ID   shift, and go to state 19
+
+    $default  reduce using rule 9 (LParamOpt)
+
+    LParamOpt  go to state 20
+    LParam     go to state 21
+    Param      go to state 22
+
+
+State 17
+
+    7 DeclObject: OBJ COI IS . '{' DeclBody '}'
+
+    '{'  shift, and go to state 23
+
+
+State 18
+
+   12 Param: VAR . ID ':' COI
+
+    ID  shift, and go to state 24
+
+
+State 19
+
+   13 Param: ID . ':' COI
+
+    ':'  shift, and go to state 25
+
+
+State 20
+
+    6 DeclClass: CLA COI '(' LParamOpt . ')' Herit IS '{' DeclBody '}'
+
+    ')'  shift, and go to state 26
+
+
+State 21
+
+    8 LParamOpt: LParam .
+
+    $default  reduce using rule 8 (LParamOpt)
+
+
+State 22
+
+   10 LParam: Param . ',' LParam
+   11       | Param .
+
+    ','  shift, and go to state 27
+
+    $default  reduce using rule 11 (LParam)
+
+
+State 23
+
+    7 DeclObject: OBJ COI IS '{' . DeclBody '}'
+
+    VAR  shift, and go to state 28
+    ID   shift, and go to state 29
+
+    $default  reduce using rule 17 (LDeclFields)
+
+    DeclBody     go to state 30
+    LDeclFields  go to state 31
+    Field        go to state 32
+
+
+State 24
+
+   12 Param: VAR ID . ':' COI
+
+    ':'  shift, and go to state 33
+
+
+State 25
+
+   13 Param: ID ':' . COI
+
+    COI  shift, and go to state 34
+
+
+State 26
+
+    6 DeclClass: CLA COI '(' LParamOpt ')' . Herit IS '{' DeclBody '}'
+
+    EXT  shift, and go to state 35
+
+    $default  reduce using rule 14 (Herit)
+
+    Herit  go to state 36
+
+
+State 27
+
+   10 LParam: Param ',' . LParam
+
+    VAR  shift, and go to state 18
+    ID   shift, and go to state 19
+
+    LParam  go to state 37
+    Param   go to state 22
+
+
+State 28
+
+   20 Field: VAR . ID ':' COI ';'
+
+    ID  shift, and go to state 38
+
+
+State 29
+
+   19 Field: ID . ':' COI ';'
+
+    ':'  shift, and go to state 39
+
+
+State 30
+
+    7 DeclObject: OBJ COI IS '{' DeclBody . '}'
+
+    '}'  shift, and go to state 40
+
+
+State 31
+
+   16 DeclBody: LDeclFields . Construct LMethods
+
+    DEF  shift, and go to state 41
+
+    Construct  go to state 42
+
+
+State 32
+
+   18 LDeclFields: Field . LDeclFields
+
+    VAR  shift, and go to state 28
+    ID   shift, and go to state 29
+
+    $default  reduce using rule 17 (LDeclFields)
+
+    LDeclFields  go to state 43
+    Field        go to state 32
+
+
+State 33
+
+   12 Param: VAR ID ':' . COI
+
+    COI  shift, and go to state 44
+
+
+State 34
+
+   13 Param: ID ':' COI .
+
+    $default  reduce using rule 13 (Param)
+
+
+State 35
+
+   15 Herit: EXT . COI
+
+    COI  shift, and go to state 45
+
+
+State 36
+
+    6 DeclClass: CLA COI '(' LParamOpt ')' Herit . IS '{' DeclBody '}'
+
+    IS  shift, and go to state 46
+
+
+State 37
+
+   10 LParam: Param ',' LParam .
+
+    $default  reduce using rule 10 (LParam)
+
+
+State 38
+
+   20 Field: VAR ID . ':' COI ';'
+
+    ':'  shift, and go to state 47
+
+
+State 39
+
+   19 Field: ID ':' . COI ';'
+
+    COI  shift, and go to state 48
+
+
+State 40
+
+    7 DeclObject: OBJ COI IS '{' DeclBody '}' .
+
+    $default  reduce using rule 7 (DeclObject)
+
+
+State 41
+
+   21 Construct: DEF . COI '(' LParamOpt ')' Super IS '{' BodyConstruct '}'
+
+    COI  shift, and go to state 49
+
+
+State 42
+
+   16 DeclBody: LDeclFields Construct . LMethods
+
+    CST  shift, and go to state 11
+
+    $default  reduce using rule 32 (LMethods)
+
+    LMethods    go to state 50
+    Expression  go to state 12
+    Bloc        go to state 51
+
+
+State 43
+
+   18 LDeclFields: Field LDeclFields .
+
+    $default  reduce using rule 18 (LDeclFields)
+
+
+State 44
+
+   12 Param: VAR ID ':' COI .
+
+    $default  reduce using rule 12 (Param)
+
+
+State 45
+
+   15 Herit: EXT COI .
+
+    $default  reduce using rule 15 (Herit)
+
+
+State 46
+
+    6 DeclClass: CLA COI '(' LParamOpt ')' Herit IS . '{' DeclBody '}'
+
+    '{'  shift, and go to state 52
+
+
+State 47
+
+   20 Field: VAR ID ':' . COI ';'
+
+    COI  shift, and go to state 53
+
+
+State 48
+
+   19 Field: ID ':' COI . ';'
+
+    ';'  shift, and go to state 54
+
+
+State 49
+
+   21 Construct: DEF COI . '(' LParamOpt ')' Super IS '{' BodyConstruct '}'
+
+    '('  shift, and go to state 55
+
+
+State 50
+
+   16 DeclBody: LDeclFields Construct LMethods .
+
+    $default  reduce using rule 16 (DeclBody)
+
+
+State 51
+
+   33 LMethods: Bloc .
+
+    $default  reduce using rule 33 (LMethods)
+
+
+State 52
+
+    6 DeclClass: CLA COI '(' LParamOpt ')' Herit IS '{' . DeclBody '}'
+
+    VAR  shift, and go to state 28
+    ID   shift, and go to state 29
+
+    $default  reduce using rule 17 (LDeclFields)
+
+    DeclBody     go to state 56
+    LDeclFields  go to state 31
+    Field        go to state 32
+
+
+State 53
+
+   20 Field: VAR ID ':' COI . ';'
+
+    ';'  shift, and go to state 57
+
+
+State 54
+
+   19 Field: ID ':' COI ';' .
+
+    $default  reduce using rule 19 (Field)
+
+
+State 55
+
+   21 Construct: DEF COI '(' . LParamOpt ')' Super IS '{' BodyConstruct '}'
+
+    VAR  shift, and go to state 18
+    ID   shift, and go to state 19
+
+    $default  reduce using rule 9 (LParamOpt)
+
+    LParamOpt  go to state 58
+    LParam     go to state 21
+    Param      go to state 22
+
+
+State 56
+
+    6 DeclClass: CLA COI '(' LParamOpt ')' Herit IS '{' DeclBody . '}'
+
+    '}'  shift, and go to state 59
+
+
+State 57
+
+   20 Field: VAR ID ':' COI ';' .
+
+    $default  reduce using rule 20 (Field)
+
+
+State 58
+
+   21 Construct: DEF COI '(' LParamOpt . ')' Super IS '{' BodyConstruct '}'
+
+    ')'  shift, and go to state 60
+
+
+State 59
+
+    6 DeclClass: CLA COI '(' LParamOpt ')' Herit IS '{' DeclBody '}' .
+
+    $default  reduce using rule 6 (DeclClass)
+
+
+State 60
+
+   21 Construct: DEF COI '(' LParamOpt ')' . Super IS '{' BodyConstruct '}'
+
+    ':'  shift, and go to state 61
+
+    $default  reduce using rule 22 (Super)
+
+    Super  go to state 62
+
+
+State 61
+
+   23 Super: ':' . COI '(' LArgOpt ')'
+
+    COI  shift, and go to state 63
+
+
+State 62
+
+   21 Construct: DEF COI '(' LParamOpt ')' Super . IS '{' BodyConstruct '}'
+
+    IS  shift, and go to state 64
+
+
+State 63
+
+   23 Super: ':' COI . '(' LArgOpt ')'
+
+    '('  shift, and go to state 65
+
+
+State 64
+
+   21 Construct: DEF COI '(' LParamOpt ')' Super IS . '{' BodyConstruct '}'
+
+    '{'  shift, and go to state 66
+
+
+State 65
+
+   23 Super: ':' COI '(' . LArgOpt ')'
+
+    ID   shift, and go to state 67
+    CST  shift, and go to state 68
+
+    $default  reduce using rule 24 (LArgOpt)
+
+    LArgOpt  go to state 69
+    LArg     go to state 70
+    Arg      go to state 71
+
+
+State 66
+
+   21 Construct: DEF COI '(' LParamOpt ')' Super IS '{' . BodyConstruct '}'
+
+    CST  shift, and go to state 11
+
+    $default  reduce using rule 30 (BodyConstruct)
+
+    BodyConstruct  go to state 72
+    Expression     go to state 12
+    Bloc           go to state 73
+
+
+State 67
+
+   28 Arg: ID .
+
+    $default  reduce using rule 28 (Arg)
+
+
+State 68
+
+   29 Arg: CST .
+
+    $default  reduce using rule 29 (Arg)
+
+
+State 69
+
+   23 Super: ':' COI '(' LArgOpt . ')'
+
+    ')'  shift, and go to state 74
+
+
+State 70
+
+   25 LArgOpt: LArg .
+
+    $default  reduce using rule 25 (LArgOpt)
+
+
+State 71
+
+   26 LArg: Arg . ',' LArg
+   27     | Arg .
+
+    ','  shift, and go to state 75
+
+    $default  reduce using rule 27 (LArg)
+
+
+State 72
+
+   21 Construct: DEF COI '(' LParamOpt ')' Super IS '{' BodyConstruct . '}'
+
+    '}'  shift, and go to state 76
+
+
+State 73
+
+   31 BodyConstruct: Bloc .
+
+    $default  reduce using rule 31 (BodyConstruct)
+
+
+State 74
+
+   23 Super: ':' COI '(' LArgOpt ')' .
+
+    $default  reduce using rule 23 (Super)
+
+
+State 75
+
+   26 LArg: Arg ',' . LArg
+
+    ID   shift, and go to state 67
+    CST  shift, and go to state 68
+
+    LArg  go to state 77
+    Arg   go to state 71
+
+
+State 76
+
+   21 Construct: DEF COI '(' LParamOpt ')' Super IS '{' BodyConstruct '}' .
+
+    $default  reduce using rule 21 (Construct)
+
+
+State 77
+
+   26 LArg: Arg ',' LArg .
+
+    $default  reduce using rule 26 (LArg)
