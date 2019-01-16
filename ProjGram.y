@@ -15,6 +15,7 @@
 %token NEW
 %token RTN
 %token THI SPR
+%token RES
 
 %{#include "proj.h"     /* les definition des types et les etiquettes des noeuds */
 
