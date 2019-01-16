@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #include <stdlib.h>
 
 /* deux macros pratiques, utilisees dans les allocations de structure
