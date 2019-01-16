@@ -9,6 +9,12 @@
 %token <I> CST
 %token AFF
 %token OVR
+%token IF THE ELS
+%token ADD SUB MUL DIV
+%token EQU DIF INF IEQ SUP SEQ
+%token NEW
+%token RTN
+%token THI SPR
 
 %{#include "proj.h"     /* les definition des types et les etiquettes des noeuds */
 
