@@ -1,34 +1,40 @@
-OBJ=tp.o tp_l.o tp_y.o
+OBJ=proj.o lex_l.o gram_y.o
 CC=gcc
 CFLAGS=-Wall -ansi -I./ -g
 LDFLAGS= -g -lfl
-tp : $(OBJ)
-	$(CC) -o tp $(OBJ) $(LDFLAGS)
+proj : $(OBJ)
+	$(CC) -o proj $(OBJ) $(LDFLAGS)
 
-test_lex: tp_y.h test_lex.o tp_l.o
-	$(CC) -o test_lex  test_lex.o tp_l.o $(LDFLAGS)
+test_lex: gram_y.h test_lex.o lex_l.o
+	$(CC) -o test_lex  test_lex.o lex_l.o $(LDFLAGS)
 
+bison : gram_y.o lex_l.o
+    $(CC) -o bison gram_y.o lex_l.o $(LDFLAGS)
+    
 # Si absent lance yacc et fait "mv y.tab.c tp.c" ce qui ecrase notre fichier.
-tp.c :
+proj.c :
 	echo ''
 
-tp.o: tp.c tp_y.h tp.h
-	$(CC) $(CFLAGS) -c tp.c
+proj.o: proj.c gram_y.h proj.h
+	$(CC) $(CFLAGS) -c proj.c
 
-tp_l.o: tp_l.c tp_y.h
-	$(CC) $(CFLAGS) -Wno-unused-function -Wno-implicit-function-declaration -c tp_l.c
+lex_l.o: lex_l.c gram_y.h
+	$(CC) $(CFLAGS) -Wno-unused-function -Wno-implicit-function-declaration -c lex_l.c
 
-tp_y.o : tp_y.c
-	$(CC) $(CFLAGS) -c tp_y.c
+gram_y.o : gram_y.c
+	$(CC) $(CFLAGS) -c gram_y.c
 
 # bison
-tp_y.h tp_y.c : tp.y tp.h
-	bison -v -d -o tp_y.c tp.y
+gram_y.h gram_y.c : ProjGram.y proj.h
+	bison -v -d -o gram_y.c ProjGram.y
 
-test_lex.o : test_lex.c tp.h tp_y.h
+test_lex.o : test_lex.c proj.h gram_y.h
 	$(CC) $(CFLAGS) -c test_lex.c
+	
+lex_l.c : proj.h gram_y.h anal_lex.l
+    flex --yylineno -olex_l.c anal_lex.l
 
-.Phony: clean
+.Phony: clean bison
 
 clean:
-	rm -f *~ tp.exe* ./tp *.o tp_l.o tp_y.* test_lex tp_y.output
+	rm -f *~ tp.exe* ./tp *.o lex_l.o gram_y.* test_lex gram_y.output
