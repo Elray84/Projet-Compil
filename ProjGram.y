@@ -107,9 +107,25 @@ ListOptMethod :
 Over :
 | OVR
 ;
+Expression : '(' Expression ')'
+| '(' COI Expression')'
+| Selection
+| Envoi
+| CST
 
-Expression : CST ;
+ ;
 
+ ExpressionBase :
+
+ ;
+
+ Selection :
+
+ ;
+
+ Envoi : ExpressionBase '.' ID
+
+ ;
 ReturnType :
 | COI
 ;
@@ -142,6 +158,9 @@ BlockInst :
 ;
 
 /* Expression booleenne seulement presente dans un IF */
+/* bexpr : expr RELOP expr
+| '(' bexpr ')'
+; */
 /* bexpr : expr RELOP expr
 | '(' bexpr ')'
 ; */
