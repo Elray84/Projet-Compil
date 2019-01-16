@@ -107,25 +107,28 @@ ListOptMethod :
 Over :
 | OVR
 ;
+
+
 Expression : '(' Expression ')'
 | '(' COI Expression')'
-| Selection
 | Envoi
 | CST
 
  ;
 
- ExpressionBase :
-
+ ExpressionBase : Selection
+ | Envoi
+ | ID
+ | CST
  ;
 
- Selection :
-
+ Selection : ExpressionBase '.' ID
  ;
 
- Envoi : ExpressionBase '.' ID
-
+ Envoi : Envoi '.' ID
+ | Selection '.' 
  ;
+
 ReturnType :
 | COI
 ;
