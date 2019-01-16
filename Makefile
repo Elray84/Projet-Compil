@@ -21,6 +21,7 @@ tp_l.o: tp_l.c tp_y.h
 tp_y.o : tp_y.c
 	$(CC) $(CFLAGS) -c tp_y.c
 
+# bison
 tp_y.h tp_y.c : tp.y tp.h
 	bison -v -d -o tp_y.c tp.y
 

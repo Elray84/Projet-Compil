@@ -21,21 +21,21 @@ extern YYSTYPE yylval;
 extern int yylineno;
 
 int keywordOrId(char *text){
-  if(strcmp(text, "class")) return class;
-  if(strcmp(text, "extends")) return extends;
-  if(strcmp(text, "is")) return is;
-  if(strcmp(text, "var")) return var;
-  if(strcmp(text, "def")) return def;
-  if(strcmp(text, "object")) return object;
-  if(strcmp(text, "override")) return override;
-  if(strcmp(text, "new")) return new;
-  if(strcmp(text, "return")) return return;
-  if(strcmp(text, "if")) return if;
-  if(strcmp(text, "then")) return then;
-  if(strcmp(text, "else")) return else;
-  if(strcmp(text, "this")) return this;
-  if(strcmp(text, "super")) return super;
-  if(strcmp(text, "result")) return result;
+  if(strcmp(text, "class")) return CLA;
+  if(strcmp(text, "extends")) return EXT;
+  if(strcmp(text, "is")) return IS;
+  if(strcmp(text, "var")) return VAR;
+  if(strcmp(text, "def")) return DEF;
+  if(strcmp(text, "object")) return OBJ;
+  if(strcmp(text, "override")) return OVR;
+  if(strcmp(text, "new")) return NEW;
+  if(strcmp(text, "return")) return RTN;
+  if(strcmp(text, "if")) return IF;
+  if(strcmp(text, "then")) return THE;
+  if(strcmp(text, "else")) return ELS;
+  if(strcmp(text, "this")) return THI;
+  if(strcmp(text, "super")) return SPR;
+  if(strcmp(text, "result")) return RES;
   return ID;
 
 }
@@ -43,7 +43,7 @@ int keywordOrId(char *text){
 %}
 
 %%
-{Entier} { yylval.I = atoi(yytext); return CSTE; }
+{Entier} { yylval.I = atoi(yytext); return CST; }
 
 {Id} { yylval.S = strdup(yytext); return keywordOrId(yytext); }
 
