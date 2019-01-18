@@ -110,22 +110,39 @@ Instruction : Expression ';' ;
 Expression : '(' Expression ')'
 | '(' COI Expression')'
 | Envoi
-| CST
 
  ;
 
- ExpressionBase : Selection
- | Envoi
- | ID
+
+
+
+ Envoi : Envoi '.' ID '(' LIDOpt ')'
+ | Selection '.' ID '(' LIDOpt ')'
+ | Selection
+ ;
+
+ Selection : Selection '.' ID
+ | Envoi '.' ID
+ | ExpressionBase
+ ;
+
+ ExpressionBase : ID
  | CST
+ | Instantiation
  ;
 
- Selection : ExpressionBase '.' ID
+ LIDOpt :
+ | LID
  ;
 
- Envoi : Envoi '.' ID
- | Selection '.'
- ;
+LID : ID ',' LID
+| ID
+;
+
+Instantiation : NEW COI '(' LIDOpt ')'
+;
+
+
 
 ReturnType :
 | COI
