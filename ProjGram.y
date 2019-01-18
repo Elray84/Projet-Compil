@@ -23,8 +23,10 @@ extern int yylex();	/* fournie par Flex */
 extern void yyerror();  /* definie dans tp.c */
 %}
 
+%left '.'
+
 %%
-programme : L BlockInst;
+programme : L Bloc;
 
 
 L :
@@ -95,7 +97,7 @@ Arg : ID
 
 ListOptMethods :
 | Over DEF ID '('LParamOpt')'  ':' COI AFF Expression ';'
-| Over DEF ID '('LParamOpt')' ReturnType IS '{'Bloc'}'
+| Over DEF ID '('LParamOpt')' ReturnType IS Bloc
 ;
 
 Over :
@@ -103,9 +105,14 @@ Over :
 ;
 
 LInstructions :
-| LInstructions Instruction;
+| Instruction LInstructions;
 
-Instruction : Expression ';' ;
+Instruction : Expression ';'
+| Bloc
+| RTN ';'
+| IF Expression THE Instruction ELS Instruction
+| ID AFF Expression
+;
 
 Expression : '(' Expression ')'
 | '(' COI Expression')'
@@ -148,15 +155,18 @@ ReturnType :
 | COI
 ;
 
-Bloc : Expression;
-
-
-Decl: ID AFF Expression ';'
+Bloc : '{' LInstructions '}'
+| '{' Decl LDecl IS Instruction LInstructions '}'
 ;
 
-BlockInst :
-| Bloc
+LDecl :
+| Decl LDecl
 ;
+
+Decl: ID ':' COI ';'
+| ID ':' COI AFF Expression ';'
+;
+
 
 /* expr : If bexpr Then expr Else expr
 
