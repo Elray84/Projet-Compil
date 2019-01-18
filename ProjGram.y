@@ -117,20 +117,20 @@ Instruction : Expression ';'
 Expression : '(' Expression ')'
 | '(' COI Expression')'
 | Envoi
-
  ;
 
-
-
-
- Envoi : Envoi '.' ID '(' LIDOpt ')'
- | Selection '.' ID '(' LIDOpt ')'
+ EnvoiOuSelect : Envoi
  | Selection
+ |ExpressionBase;
+
+ Envoi : EnvoiOuSelect '.' ID '(' LIDOpt ')'
+ /*| Selection '.' ID '(' LIDOpt ')'*/
+ /*| Selection*/
  ;
 
- Selection : Selection '.' ID
- | Envoi '.' ID
- | ExpressionBase
+ Selection : EnvoiOuSelect '.' ID
+ /*| Envoi '.' ID
+ | ExpressionBase*/
  ;
 
  ExpressionBase : ID
