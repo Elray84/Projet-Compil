@@ -23,8 +23,10 @@ extern int yylex();	/* fournie par Flex */
 extern void yyerror();  /* definie dans tp.c */
 %}
 
+%left '.'
+
 %%
-programme : L BlockInst;
+programme : L Bloc;
 
 
 L :
@@ -95,7 +97,7 @@ Arg : ID
 
 ListOptMethods :
 | Over DEF ID '('LParamOpt')'  ':' COI AFF Expression ';'
-| Over DEF ID '('LParamOpt')' ReturnType IS '{'Bloc'}'
+| Over DEF ID '('LParamOpt')' ReturnType IS Bloc
 ;
 
 Over :
@@ -103,43 +105,68 @@ Over :
 ;
 
 LInstructions :
-| LInstructions Instruction;
+| Instruction LInstructions;
 
-Instruction : Expression ';' ;
+Instruction : Expression ';'
+| Bloc
+| RTN ';'
+| IF Expression THE Instruction ELS Instruction
+| ID AFF Expression
+;
 
 Expression : '(' Expression ')'
 | '(' COI Expression')'
 | Envoi
-| CST
-
  ;
 
- ExpressionBase : Selection
- | Envoi
- | ID
+ EnvoiOuSelect : Envoi
+ | Selection
+ |ExpressionBase;
+
+ Envoi : EnvoiOuSelect '.' ID '(' LIDOpt ')'
+ /*| Selection '.' ID '(' LIDOpt ')'*/
+ /*| Selection*/
+ ;
+
+ Selection : EnvoiOuSelect '.' ID
+ /*| Envoi '.' ID
+ | ExpressionBase*/
+ ;
+
+ ExpressionBase : ID
  | CST
+ | Instantiation
  ;
 
- Selection : ExpressionBase '.' ID
+ LIDOpt :
+ | LID
  ;
 
- Envoi : Envoi '.' ID
- | Selection '.'
- ;
+LID : ID ',' LID
+| ID
+;
+
+Instantiation : NEW COI '(' LIDOpt ')'
+;
+
+
 
 ReturnType :
 | COI
 ;
 
-Bloc : Expression;
-
-
-Decl: ID AFF Expression ';'
+Bloc : '{' LInstructions '}'
+| '{' Decl LDecl IS Instruction LInstructions '}'
 ;
 
-BlockInst :
-| Bloc
+LDecl :
+| Decl LDecl
 ;
+
+Decl: ID ':' COI ';'
+| ID ':' COI AFF Expression ';'
+;
+
 
 /* expr : If bexpr Then expr Else expr
 
