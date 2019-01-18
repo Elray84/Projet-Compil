@@ -11,7 +11,7 @@
 %token OVR
 %token IF THE ELS
 %token ADD SUB MUL DIV
-%token EQU DIF INF IEQ SUP SEQ
+%token <R>RELOP
 %token NEW
 %token RTN
 %token THI SPR

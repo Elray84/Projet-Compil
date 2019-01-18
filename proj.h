@@ -24,35 +24,35 @@ typedef int bool;
 
 
 /* Etiquettes pour les arbres de syntaxe abstraite */
-#define hADD	1
-#define hSUB	2
-#define hMUL	3
-#define hDIV	4
-#define hEQU	5
-#define hDIF	6
-#define hSUP	7
-#define hINF	8
-#define hSEQ	9
-#define hIEQ	10
-#define hAFF	11
-#define hCLA	12
-#define hEXT	13
-#define hIS	    14
-#define hVAR	15
-#define hDEF    16
-#define hOBJ    17
-#define hOVR    18
-#define hNEW    19
-#define hRTN    20
-#define hIF     21
-#define hTHE    22
-#define hELS    23
-#define hTHI    24
-#define hSPR    25
-#define hRES    26
-#define hCST    27
-#define hID     28
-#define hCOI    29
+#define ADD	1
+#define SUB	2
+#define MUL	3
+#define DIV	4
+#define EQU	5
+#define DIF	6
+#define SUP	7
+#define INF	8
+#define SEQ	9
+#define IEQ	10
+#define AFF	11
+#define CLA	12
+#define EXT	13
+#define IS	14
+#define VAR	15
+#define DEF 16
+#define OBJ 17
+#define OVR 18
+#define NEW 19
+#define RTN 20
+#define IF  21
+#define THE 22
+#define ELS 23
+#define THI 24
+#define SPR 25
+#define RES 26
+#define CST 27
+#define ID  28
+#define COI 29
 
 
 		/* Definition d'un arbre de syntaxe abstraite */
@@ -80,6 +80,14 @@ typedef struct _Decl
   struct _Decl *next;
 } VarDecl, *VarDeclP;
 
+enum Relop {
+  EQU,
+  DIF,
+  INF,
+  IEQ,
+  SUP,
+  SEQ
+}
 
 /* Type pour la valeur de retour de Flex et les actions de Bison
  * le premier champ est necessaire pour Flex.
@@ -88,6 +96,7 @@ typedef struct _Decl
 */
 typedef union
 { char C;	/* caractere isole */
+  enum R; /* Contenu du relop */
   char *S;	/* chaine de caractere */
   int I;	/* valeur entiere */
   VarDeclP D;	/* liste de paires (variable, valeur) */
