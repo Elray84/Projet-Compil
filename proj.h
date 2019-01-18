@@ -37,22 +37,22 @@ typedef int bool;
 #define hAFF	11
 #define hCLA	12
 #define hEXT	13
-#define hIS	    14
+#define hIS	14
 #define hVAR	15
-#define hDEF    16
-#define hOBJ    17
-#define hOVR    18
-#define hNEW    19
-#define hRTN    20
-#define hIF     21
-#define hTHE    22
-#define hELS    23
-#define hTHI    24
-#define hSPR    25
-#define hRES    26
-#define hCST    27
-#define hID     28
-#define hCOI    29
+#define hDEF   16
+#define hOBJ   17
+#define hOVR   18
+#define hNEW   19
+#define hRTN   20
+#define hIF    21
+#define hTHE   22
+#define hELS   23
+#define hTHI   24
+#define hSPR   25
+#define hRES   26
+#define hCST   27
+#define hID    28
+#define hCOI   29
 
 
 		/* Definition d'un arbre de syntaxe abstraite */
@@ -80,6 +80,23 @@ typedef struct _Decl
   struct _Decl *next;
 } VarDecl, *VarDeclP;
 
+/* La structure de la classe mamène */
+
+typedef struct _Meth
+{ char *name;
+  
+  VarDeclP decls;
+  TreeP ListInstr;
+
+  struct _Meth *next;
+} Meth, *MethP;
+
+typedef struct _Class
+{ char *name;
+  struct _Class *superClass;
+  struct _Class *next;
+  MethP meths;
+} Class, *ClassP;
 
 /* Type pour la valeur de retour de Flex et les actions de Bison
  * le premier champ est necessaire pour Flex.
