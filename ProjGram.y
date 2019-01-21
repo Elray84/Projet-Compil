@@ -16,6 +16,10 @@
 %token RTN
 %token THI SPR
 %token RES
+%token ADD SUB MUL DIV
+
+
+
 
 %{#include "proj.h"     /* les definition des types et les etiquettes des noeuds */
 
@@ -23,6 +27,10 @@ extern int yylex();	/* fournie par Flex */
 extern void yyerror();  /* definie dans tp.c */
 %}
 
+
+%left ADD SUB
+%left MUL DIV
+%nonassoc UNARY
 %left '.'
 
 %%
@@ -114,7 +122,13 @@ Instruction : Expression ';'
 | ID AFF Expression
 ;
 
-Expression : '(' Expression ')'
+Expression : Expression ADD Expression
+| Expression SUB Expression
+| Expression MUL Expression
+| Expression DIV Expression
+| ADD Expression %prec unary
+| SUB Expression %prec unary
+| '(' Expression ')'
 | '(' COI Expression')'
 | Envoi
 
