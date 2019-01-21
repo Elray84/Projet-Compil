@@ -25,21 +25,21 @@ extern int yylineno;
 extern char *strdup(const char*);
 
 int keywordOrId(char *text){
-  if(strcmp(text, "class")) return CLA;
-  if(strcmp(text, "extends")) return EXT;
-  if(strcmp(text, "is")) return IS;
-  if(strcmp(text, "var")) return VAR;
-  if(strcmp(text, "def")) return DEF;
-  if(strcmp(text, "object")) return OBJ;
-  if(strcmp(text, "override")) return OVR;
-  if(strcmp(text, "new")) return NEW;
-  if(strcmp(text, "return")) return RTN;
-  if(strcmp(text, "if")) return IF;
-  if(strcmp(text, "then")) return THE;
-  if(strcmp(text, "else")) return ELS;
-  if(strcmp(text, "this")) return THI;
-  if(strcmp(text, "super")) return SPR;
-  if(strcmp(text, "result")) return RES;
+  if(!strcmp(text, "class")) return CLA;
+  if(!strcmp(text, "extends")) return EXT;
+  if(!strcmp(text, "is")) return IS;
+  if(!strcmp(text, "var")) return VAR;
+  if(!strcmp(text, "def")) return DEF;
+  if(!strcmp(text, "object")) return OBJ;
+  if(!strcmp(text, "override")) return OVR;
+  if(!strcmp(text, "new")) return NEW;
+  if(!strcmp(text, "return")) return RTN;
+  if(!strcmp(text, "if")) return IF;
+  if(!strcmp(text, "then")) return THE;
+  if(!strcmp(text, "else")) return ELS;
+  if(!strcmp(text, "this")) return THI;
+  if(!strcmp(text, "super")) return SPR;
+  if(!strcmp(text, "result")) return RES;
   return ID;
 
 }

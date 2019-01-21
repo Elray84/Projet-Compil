@@ -16,6 +16,7 @@
 %token RTN
 %token THI SPR
 %token RES
+%token CONCAT
 
 %{#include "proj.h"     /* les definition des types et les etiquettes des noeuds */
 
@@ -26,6 +27,7 @@ extern void yyerror();  /* definie dans tp.c */
 %nonassoc RELOP
 %left ADD SUB
 %left MUL DIV
+%left CONCAT
 %nonassoc unary
 %left '.'
 
@@ -115,25 +117,26 @@ Instruction : Expression ';'
 | Bloc
 | RTN ';'
 | IF Expression THE Instruction ELS Instruction
-| ID AFF Expression
+| ID AFF Expression ';'
 ;
 
-Expression : Expression ADD Expression
+Expression : Expression RELOP Expression
+| Expression ADD Expression
 | Expression SUB Expression
 | Expression MUL Expression
 | Expression DIV Expression
 | ADD Expression %prec unary
 | SUB Expression %prec unary
-|'(' Expression ')'
-| '(' COI Expression')'
+| Expression CONCAT Expression
 | EnvoiOuSelect
  ;
 
  EnvoiOuSelect : Envoi
  | Selection
- |ExpressionBase;
+ | ExpressionBase
+ ;
 
- Envoi : EnvoiOuSelect '.' ID '(' LIDOpt ')'
+ Envoi : EnvoiOuSelect '.' ID '(' LEOpt ')'
  /*| Selection '.' ID '(' LIDOpt ')'*/
  /*| Selection*/
  ;
@@ -146,17 +149,11 @@ Expression : Expression ADD Expression
  ExpressionBase : ID
  | CST
  | Instantiation
- ;
+ | '(' Expression ')'
+ | '(' COI Expression')'
+  ;
 
- LIDOpt :
- | LID
- ;
-
-LID : ID ',' LID
-| ID
-;
-
-Instantiation : NEW COI '(' LIDOpt ')'
+Instantiation : NEW COI '(' LEOpt ')'
 ;
 
 
@@ -177,6 +174,13 @@ Decl: ID ':' COI ';'
 | ID ':' COI AFF Expression ';'
 ;
 
+LEOpt :
+| LE
+;
+
+LE : Expression
+| Expression ',' LE
+;
 
 /* expr : If bexpr Then expr Else expr
 
