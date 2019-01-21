@@ -44,7 +44,7 @@ int keywordOrId(char *text){
 }
 
 void lexError(char c) {
-	fprintf(stderr, "Token error: %c", c);
+	fprintf(stderr, "Token error: %c\n At line : %i", c, 0);
 	setError(LEXICAL_ERROR);
 }
 
@@ -69,17 +69,17 @@ void lexError(char c) {
 
 "/" { return DIV; }
 
-"=" { return EQU; }
+"=" { yylval.R = EQU; return RELOP; }
 
-"<>" { return DIF; }
+"<>" { yylval.R = DIF; return RELOP; }
 
-">" { return SUP; }
+">" { yylval.R = SUP; return RELOP; }
 
-"<" { return INF; }
+"<" { yylval.R = INF; return RELOP; }
 
-">=" { return SEQ; }
+">=" { yylval.R = SEQ; return RELOP; }
 
-"<=" { return IEQ; }
+"<=" { yylval.R = IEQ; return RELOP; }
 
 ":=" { return AFF;}
 

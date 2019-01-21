@@ -116,12 +116,28 @@ int main(int argc, char **argv) {
       printf("Operateur arithmetique '*'\n"); break;
     case DIV:
       printf("Operateur arithmetique '/'\n"); break;
-    case EQU: printf("Operateur comparaison '='\n"); break;
-	case DIF: printf("Operateur comparaison '<>'\n"); break;
-	case INF: printf("Operateur comparaison '<'\n"); break;
-	case IEQ: printf("Operateur comparaison '<='\n"); break;
-	case SUP: printf("Operateur comparaison '>'\n"); break;
-	case SEQ: printf("Operateur comparaison '>='\n"); break;
+    case RELOP: printf("Symbole relop :");
+      switch(yylval.R){
+      	case EQU :
+      	  printf(" égalité\n");
+      	  break;
+      	case DIF :
+      	  printf(" différence\n");
+      	  break;
+      	case INF :
+      	  printf(" infériorité\n");
+      	  break;
+      	case SUP :
+      	  printf(" supériorité\n");
+      	  break;
+      	case IEQ :
+      	  printf(" inferiorité ou égalité\n");
+      	  break;
+      	case SEQ :
+      	  printf(" superiorité ou égalité\n");
+      	  break;
+      };
+      break;
     case AFF: printf("Symbole d'affectation\t:=\n"); break;
     case CLA: printf("Symbole class\n"); break;
     case EXT: printf("Symbole extends\n"); break;
@@ -137,7 +153,7 @@ int main(int argc, char **argv) {
     case RES: printf("Symbole result\n"); break;
     case COI: printf("Symbole coi\n"); break;
     default:
-      printf("Token non reconnu:\t\"%d\"\n", token);
+      printf("Caractère :\t\"%c\"\n", (char)token);
     }
   }
 }

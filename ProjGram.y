@@ -11,7 +11,7 @@
 %token OVR
 %token IF THE ELS
 %token ADD SUB MUL DIV
-%token <R>RELOP
+%token <R> RELOP
 %token NEW
 %token RTN
 %token THI SPR
@@ -25,7 +25,7 @@ extern void yyerror();  /* definie dans tp.c */
 
 %left ADD SUB
 %left MUL DIV
-%nonassoc UNARY
+%nonassoc unary
 %left '.'
 
 %%

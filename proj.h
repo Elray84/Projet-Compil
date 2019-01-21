@@ -80,7 +80,7 @@ typedef struct _Decl
   struct _Decl *next;
 } VarDecl, *VarDeclP;
 
-/* La structure de la classe mamène */
+/* La structure de la classe mamène 
 
 typedef struct _Meth
 { char *name;
@@ -98,6 +98,7 @@ typedef struct _Class
   MethP meths;
 } Class, *ClassP;
 
+*/
 enum Relop {
   EQU,
   DIF,
@@ -105,7 +106,7 @@ enum Relop {
   IEQ,
   SUP,
   SEQ
-}
+};
 /* Type pour la valeur de retour de Flex et les actions de Bison
  * le premier champ est necessaire pour Flex.
  * les autres correspondent aux variantes utilisees dans les actions
@@ -113,7 +114,7 @@ enum Relop {
 */
 typedef union
 { char C;	/* caractere isole */
-  enum R; /* Contenu du relop */
+  enum Relop R; /* Contenu du relop */
   char *S;	/* chaine de caractere */
   int I;	/* valeur entiere */
   VarDeclP D;	/* liste de paires (variable, valeur) */
