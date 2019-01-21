@@ -22,6 +22,7 @@ String \"{NoGuillemet}*\"
 
 extern YYSTYPE yylval;
 extern int yylineno;
+extern char *strdup(const char*);
 
 int keywordOrId(char *text){
   if(strcmp(text, "class")) return CLA;
@@ -44,7 +45,7 @@ int keywordOrId(char *text){
 }
 
 void lexError(char c) {
-	fprintf(stderr, "Token error: %c\n At line : %i", c, 0);
+	fprintf(stderr, "Token error: %c\n At line : %i", c, yylineno);
 	setError(LEXICAL_ERROR);
 }
 
