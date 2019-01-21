@@ -124,9 +124,9 @@ Expression : Expression ADD Expression
 | Expression DIV Expression
 | ADD Expression %prec unary
 | SUB Expression %prec unary
-'(' Expression ')'
+|'(' Expression ')'
 | '(' COI Expression')'
-| Envoi
+| EnvoiOuSelect
  ;
 
  EnvoiOuSelect : Envoi
