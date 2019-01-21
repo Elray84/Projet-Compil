@@ -11,22 +11,17 @@
 %token OVR
 %token IF THE ELS
 %token ADD SUB MUL DIV
-%token EQU DIF INF IEQ SUP SEQ
+%token <R>RELOP
 %token NEW
 %token RTN
 %token THI SPR
 %token RES
-%token ADD SUB MUL DIV
-
-
-
 
 %{#include "proj.h"     /* les definition des types et les etiquettes des noeuds */
 
 extern int yylex();	/* fournie par Flex */
 extern void yyerror();  /* definie dans tp.c */
 %}
-
 
 %left ADD SUB
 %left MUL DIV
@@ -128,23 +123,23 @@ Expression : Expression ADD Expression
 | Expression DIV Expression
 | ADD Expression %prec unary
 | SUB Expression %prec unary
-| '(' Expression ')'
+'(' Expression ')'
 | '(' COI Expression')'
 | Envoi
-
  ;
 
-
-
-
- Envoi : Envoi '.' ID '(' LIDOpt ')'
- | Selection '.' ID '(' LIDOpt ')'
+ EnvoiOuSelect : Envoi
  | Selection
+ |ExpressionBase;
+
+ Envoi : EnvoiOuSelect '.' ID '(' LIDOpt ')'
+ /*| Selection '.' ID '(' LIDOpt ')'*/
+ /*| Selection*/
  ;
 
- Selection : Selection '.' ID
- | Envoi '.' ID
- | ExpressionBase
+ Selection : EnvoiOuSelect '.' ID
+ /*| Envoi '.' ID
+ | ExpressionBase*/
  ;
 
  ExpressionBase : ID
