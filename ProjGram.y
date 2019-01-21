@@ -23,6 +23,7 @@ extern int yylex();	/* fournie par Flex */
 extern void yyerror();  /* definie dans tp.c */
 %}
 
+%nonassoc RELOP
 %left ADD SUB
 %left MUL DIV
 %nonassoc unary
