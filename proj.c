@@ -131,9 +131,9 @@ TreeP makeNode(int nbChildren, short op) {
 TreeP makeTree(short op, int nbChildren, ...) {
   va_list args;
   int i;
-  TreeP tree = makeNode(nbChildren, op); 
+  TreeP tree = makeNode(nbChildren, op);
   va_start(args, nbChildren);
-  for (i = 0; i < nbChildren; i++) { 
+  for (i = 0; i < nbChildren; i++) {
     tree->u.children[i] = va_arg(args, TreeP);
   }
   va_end(args);
@@ -149,7 +149,7 @@ TreeP getChild(TreeP tree, int i) {
 
 /* Constructeur de feuille dont la valeur est un entier */
 TreeP makeLeafInt(short op, int val) {
-  TreeP tree = makeNode(0, op); 
+  TreeP tree = makeNode(0, op);
   tree->u.val = val;
   return(tree);
 }
@@ -208,7 +208,7 @@ bool checkScope(TreeP tree, VarDeclP lvar) {
   VarDeclP p; char *name;
   if (tree == NIL(Tree)) { return TRUE; }
   switch (tree->op) {
-  case IDVAR :
+  case hID :
     name = tree->u.str;
     for(p=lvar; p != NIL(VarDecl); p = p->next) {
       if (! strcmp(p->name, name)) { return TRUE; }
@@ -216,25 +216,27 @@ bool checkScope(TreeP tree, VarDeclP lvar) {
     fprintf(stderr, "\nError: undeclared variable %s\n", name);
     setError(CONTEXT_ERROR);
     return FALSE;
-  case CONST:
+  case hCST:
     return TRUE;
-  case ITE:
+  case hIF:
     return checkScope(getChild(tree, 0), lvar)
       && checkScope(getChild(tree, 1), lvar)
       && checkScope(getChild(tree, 2), lvar);
-  case EQ:
-  case NE:
-  case GT:
-  case GE:
-  case LT:
-  case LE:
-  case Eadd:
-  case Eminus:
-  case Emult:
-  case Ediv:
+  case hTHE:
+  case hELS:
+  case hEQU:
+  case hDIF:
+  case hSUP:
+  case hSEQ:
+  case hINF:
+  case hIEQ:
+  case hADD:
+  case hSUB:
+  case hMUL:
+  case hDIV:
     return checkScope(getChild(tree, 0), lvar)
-             && checkScope(getChild(tree, 1), lvar); 
-  default: 
+             && checkScope(getChild(tree, 1), lvar);
+  default:
     fprintf(stderr, "Erreur! etiquette indefinie: %d\n", tree->op);
     exit(UNEXPECTED);
   }
@@ -245,7 +247,7 @@ VarDeclP declVar(char *name, TreeP tree, VarDeclP decls) {
   VarDeclP pvar = NEW(1, VarDecl);
   pvar->name = name; pvar->next = NIL(VarDecl);
   checkScope(tree, decls);
-  genCode(tree, decls);
+  // genCode(tree, decls);
   return addToScope(decls, pvar);
 }
 
@@ -254,14 +256,14 @@ VarDeclP declVar(char *name, TreeP tree, VarDeclP decls) {
  * Si check vaut Vrai, Verifie si cet identificateur a bien ete declare.
  */
 TreeP makeLeafStr(short op, char *str) {
-  TreeP tree = makeNode(0, op); 
+  TreeP tree = makeNode(0, op);
   tree->u.str = str;
   return(tree);
 }
 
 
 VarDeclP genCodeAff (TreeP tree, VarDeclP decls) {
-  if (tree == NIL(Tree) || tree->op != DECL) {
+  if (tree == NIL(Tree) || tree->op != hDCL) {
     exit(UNEXPECTED);
   } else {
     /* Va laisser la valeur de la nouvelle variable en sommet de pile
@@ -286,11 +288,11 @@ VarDeclP genCodeDecls (TreeP tree) {
     res = genCodeDecls(g);
     res = genCodeAff(d, res);
     return res;
-  } 
+  }
 }
 
 
-/* generation de code pour un if then else 
+/* generation de code pour un if then else
  * le premier fils represente la condition,
  * les deux autres fils correspondent respectivement aux parties then et else.
  */
@@ -304,7 +306,7 @@ int genCodeIf(TreeP tree, VarDeclP decls) {
   printf("%s: ", etiFalse);
   genCode(getChild(tree, 2), decls);
   printf("%s: NOP\n", etiFin);
-  return 0;  
+  return 0;
 }
 
 
@@ -329,56 +331,58 @@ int getLocVar(char *name, VarDeclP decls) {
 int genCode(TreeP tree, VarDeclP decls) {
   if (tree == NIL(Tree)) { exit(UNEXPECTED); }
   switch (tree->op) {
- case IDVAR:
+ case hID:
    printf("PUSHG %d \t-- %s\n", getLocVar(tree->u.str, decls), tree->u.str);
    break;
-  case CONST:
+  case hCST:
     printf("PUSHI %d\n", tree->u.val);
     break;
-  case EQ:
+  case hEQU:
     genCode(getChild(tree, 0), decls); genCode(getChild(tree, 1), decls);
     printf("EQUAL\n");
     break;
-  case NE:
+  case hDIF:
     genCode(getChild(tree, 0), decls); genCode(getChild(tree, 1), decls);
     printf("EQUAL\nNOT\n");
     break;
-  case GT:
+  case hSUP:
     genCode(getChild(tree, 0), decls); genCode(getChild(tree, 1), decls);
     printf("SUP\n");
     break;
-  case GE:
+  case hSEQ:
     genCode(getChild(tree, 0), decls); genCode(getChild(tree, 1), decls);
     printf("SUPEQ\n");
     break;
-  case LT:
+  case hINF:
     genCode(getChild(tree, 0), decls); genCode(getChild(tree, 1), decls);
     printf("INF\n");
     break;
-  case LE:
+  case hIEQ:
     genCode(getChild(tree, 0), decls); genCode(getChild(tree, 1), decls);
     printf("INFEQ\n");
     break;
-  case Eadd:
+  case hADD:
     genCode(getChild(tree, 0), decls); genCode(getChild(tree, 1), decls);
     printf("ADD\n");
     break;
-  case Eminus:
+  case hSUB:
     genCode(getChild(tree, 0), decls); genCode(getChild(tree, 1), decls);
     printf("SUB\n");
     break;
-  case Emult:
+  case hMUL:
     genCode(getChild(tree, 0), decls); genCode(getChild(tree, 1), decls);
     printf("MUL\n");
     break;
-  case Ediv:
+  case hDIV:
     genCode(getChild(tree, 0), decls); genCode(getChild(tree, 1), decls);
     printf("DUPN 1\nJZ DIV0\n");
     break;
-  case ITE:
+  case hIF:
     genCodeIf(tree, decls);
     break;
-  default: 
+  case hTHE:
+  case hELS:
+  default:
     fprintf(stderr, "Erreur! etiquette indefinie: %d\n", tree->op);
     exit(UNEXPECTED);
   }

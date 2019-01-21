@@ -54,6 +54,8 @@ typedef int bool;
 #define hID    28
 #define hCOI   29
 
+#define hDCL 30 /* TODO a remove c'est juste pour indiquer une declaration pour tester */
+
 
 		/* Definition d'un arbre de syntaxe abstraite */
 
@@ -77,10 +79,11 @@ typedef struct _Tree {
 typedef struct _Decl
 { char *name;
   int val;
+  int rank;
   struct _Decl *next;
 } VarDecl, *VarDeclP;
 
-/* La structure de la classe mamène 
+/* La structure de la classe mamène
 
 typedef struct _Meth
 { char *name;
