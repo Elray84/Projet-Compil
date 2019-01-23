@@ -26,8 +26,8 @@ gram_y.o : gram_y.c
 	$(CC) $(CFLAGS) -c gram_y.c
 
 # bison
-gram_y.h gram_y.c : ProjGram.y proj.h
-	bison -v -d -o gram_y.c ProjGram.y
+gram_y.h gram_y.c : gram.y proj.h
+	bison -v -d -o gram_y.c gram.y
 
 test_lex.o : test_lex.c proj.h gram_y.h
 	$(CC) $(CFLAGS) -c test_lex.c
@@ -36,6 +36,6 @@ lex_l.c : gram_y.h proj.h anal_lex.l
 	flex --yylineno -olex_l.c anal_lex.l
 
 .Phony: clean
-# commande pour tester grammaire : bison -v -b gram_y -d ProjGram.y
+# commande pour tester grammaire : bison -v -b gram_y -d gram.y
 clean:
 	rm -f *~ tp.exe* ./tp *.o lex_l.o gram_y.* test_lex lex_l.c gram_y.output

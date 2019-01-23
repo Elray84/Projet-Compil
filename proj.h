@@ -83,7 +83,7 @@ typedef struct _Decl
   struct _Decl *next;
 } VarDecl, *VarDeclP;
 
-/* La structure de la classe mamène
+
 
 typedef struct _Meth
 { char *name;
@@ -101,7 +101,7 @@ typedef struct _Class
   MethP meths;
 } Class, *ClassP;
 
-*/
+
 enum Relop {
   EQU,
   DIF,

@@ -45,10 +45,10 @@ DeclStruct : DeclClass
 ;
 
 
-DeclClass : CLA COI '(' LParamOpt ')' Herit IS '{' DeclBody '}'
+DeclClass : CLA COI '(' LParamOpt ')' Herit IS '{' DeclClassBody '}'
 ;
 
-DeclObject : OBJ COI IS '{' DeclBody '}'
+DeclObject : OBJ COI IS '{' DeclObjectBody '}'
 ;
 
 LParamOpt : LParam
@@ -70,7 +70,10 @@ Herit :
 ;
 
 
-DeclBody : LDeclFields Construct ListOptMethods
+DeclClassBody : LDeclFields ClassConstruct ListOptMethods
+;
+
+DeclObjectBody : LDeclFields ObjectConstruct ListOptMethods
 ;
 
 LDeclFields :
@@ -81,7 +84,10 @@ Field : ID ':' COI ';'
 | VAR ID ':' COI ';'
 ;
 
-Construct : DEF COI '(' LParamOpt ')' Super IS '{' LInstructions '}'
+ClassConstruct : DEF COI '(' LParamOpt ')' Super IS '{' LInstructions '}'
+;
+
+ObjectConstruct : DEF COI Super IS '{' LInstructions '}'
 ;
 
 Super :
@@ -96,13 +102,14 @@ LArg : Arg ',' LArg
 | Arg
 ;
 
-Arg : ID
-| CST
+Arg : Expression
 ;
 
+ListOptMethods : 
+| Method ListOptMethods
+;
 
-ListOptMethods :
-| Over DEF ID '('LParamOpt')'  ':' COI AFF Expression ';'
+Method : Over DEF ID '('LParamOpt')'  ':' COI AFF Expression
 | Over DEF ID '('LParamOpt')' ReturnType IS Bloc
 ;
 
@@ -117,7 +124,7 @@ Instruction : Expression ';'
 | Bloc
 | RTN ';'
 | IF Expression THE Instruction ELS Instruction
-| ID AFF Expression ';'
+| Expression AFF Expression ';'
 ;
 
 Expression : Expression RELOP Expression
@@ -129,6 +136,7 @@ Expression : Expression RELOP Expression
 | SUB Expression %prec unary
 | Expression CONCAT Expression
 | EnvoiOuSelect
+/*| ExpressionNonAffectable*/
  ;
 
  EnvoiOuSelect : Envoi
@@ -137,6 +145,7 @@ Expression : Expression RELOP Expression
  ;
 
  Envoi : EnvoiOuSelect '.' ID '(' LEOpt ')'
+ | COI '.' ID '(' LEOpt ')'
  /*| Selection '.' ID '(' LIDOpt ')'*/
  /*| Selection*/
  ;
@@ -147,11 +156,14 @@ Expression : Expression RELOP Expression
  ;
 
  ExpressionBase : ID
+ | '(' Expression ')'
+ | '(' COI ExpressionBase')'
+ | THI
+ | SPR
+ | RES
  | CST
  | Instantiation
- | '(' Expression ')'
- | '(' COI Expression')'
-  ;
+ ;
 
 Instantiation : NEW COI '(' LEOpt ')'
 ;
@@ -159,7 +171,7 @@ Instantiation : NEW COI '(' LEOpt ')'
 
 
 ReturnType :
-| COI
+| ':' COI
 ;
 
 Bloc : '{' LInstructions '}'

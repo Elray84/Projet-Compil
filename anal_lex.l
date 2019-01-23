@@ -45,7 +45,7 @@ int keywordOrId(char *text){
 }
 
 void lexError(char c) {
-	fprintf(stderr, "Token error: %c\n At line : %i", c, yylineno);
+	fprintf(stderr, "Token error: %c\n At line : %i\n", c, yylineno);
 	setError(LEXICAL_ERROR);
 }
 
@@ -84,8 +84,10 @@ void lexError(char c) {
 
 ":=" { return AFF;}
 
+"&" { return CONCAT;}
+
 {Sym} { return yytext[0];}
 
-{String} { yylval.S = strdup(yytext); return ID;}
+{String} { yylval.S = strdup(yytext); return CST;}
 
 .  { lexError(yytext[0]); }

@@ -1,8 +1,21 @@
 object CptPoint is           /* objet compteur d'instances de Point */
 { var next : Integer;        /* index de la prochaine instance de Point */
-  def CptPoint is { this.next := -1; }
-  def incr() : Integer is { result := this.next; this.next := this.next + 1;}
-  def howMany() : Integer := this.next - 1 /* nbre d'instances creees */
+  def CptPoint is
+   {
+    this
+    .next
+     := -1; }
+  def
+   incr():
+    Integer is 
+  { result 
+  := this.next;
+   this.next := this.next + 1;}
+   
+  def howMany() : 
+  Integer := 
+  
+  this.next - 1 /* nbre d'instances creees */
 }
 
 /* la parametres precedes de var definissent implicitement des attributs */
@@ -152,7 +165,12 @@ class PointColore(x: Integer, y:Integer, var coul: Couleur)
       extends Point is {
 
   def PointColore (x: Integer, y:Integer, var coul: Couleur)
-     : Point(x, y, "P-" & CptPoint.howMany().toString() ) is
+  
+     : Point
+     (x, y,
+      "P-" & 
+      CptPoint.howMany().toString()
+       ) is
   { }
 
   def couleur() : Couleur := this.coul
