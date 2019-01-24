@@ -76,11 +76,19 @@ typedef struct _Tree {
  * On va construire des listes de la forme { (x 5), (y, 27) } au fur
  * et a mesure qu'on interprete les declarations dans un programme source.
  */
+
+enum Type {
+  integ,
+  string
+};
+
+
 typedef struct _Decl
 { char *name;
   int val;
   int rank;
   struct _Decl *next;
+  enum Type type;
 } VarDecl, *VarDeclP;
 
 typedef struct _Var
