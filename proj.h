@@ -95,8 +95,9 @@ typedef struct _Var
 { int type; /* Etiquette objet ou variable normale */
   union
   {
-  	struct _Objet *attObjet;
-    VarDeclP attVar;
+  	struct _Objet *objet;
+  	struct _ObjetIsole *objetIsole;
+    VarDeclP varBase;
   } u;
 } Var, *VarP;
 
