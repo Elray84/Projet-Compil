@@ -55,7 +55,7 @@ typedef int bool;
 #define hCOI   29
 
 #define hDCL 30 /* TODO a remove c'est juste pour indiquer une declaration pour tester */
-
+#define hLST 31 /* l'etiquette des arbres liste */
 
 		/* Definition d'un arbre de syntaxe abstraite */
 
@@ -135,7 +135,7 @@ typedef struct _Objet
   ClassP oClass;
   VarP attributs;
 } Objet, *ObjetP;
-  
+
 
 enum Relop {
   EQU,
