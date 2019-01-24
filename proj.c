@@ -10,6 +10,7 @@ extern int yyparse();
 extern int yylineno;
 
 extern char *strdup(const char *s);
+extern int genCode(TreeP, VarDeclP);
 
 /* Niveau de 'verbosite'.
  * Par defaut, n'imprime que le resultat et les messages d'erreur
@@ -260,6 +261,25 @@ TreeP makeLeafStr(short op, char *str) {
   tree->u.str = str;
   return(tree);
 }
+
+
+/* GENERATION DE CODE
+|
+|
+|
+|
+|
+|
+|
+|
+|
+|
+|
+|
+|
+|
+|
+*/
 
 
 VarDeclP genCodeAff (TreeP tree, VarDeclP decls) {

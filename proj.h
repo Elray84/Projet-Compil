@@ -83,24 +83,50 @@ typedef struct _Decl
   struct _Decl *next;
 } VarDecl, *VarDeclP;
 
-
+typedef struct _Var
+{ int type; /* Etiquette objet ou variable normale */
+  union
+  {
+  	struct _Objet *attObjet;
+    VarDeclP attVar;
+  } u;
+} Var, *VarP;
 
 typedef struct _Meth
 { char *name;
-
-  VarDeclP decls;
+  int constr;
+  int rank;
+  VarP decls;
   TreeP ListInstr;
-
   struct _Meth *next;
 } Meth, *MethP;
 
+
 typedef struct _Class
 { char *name;
+  int rank;
   struct _Class *superClass;
   struct _Class *next;
   MethP meths;
+  VarP decls;
+  // AttributP attributs;
 } Class, *ClassP;
 
+typedef struct _ObjetIsole
+{ char *name;
+  int rank;
+  VarP decls;
+  MethP meths;
+  struct _ObjetIsole *next;
+} ObjetIsole, *ObjetIsoleP;
+
+typedef struct _Objet
+{ char *name;
+  int rank;
+  ClassP oClass;
+  VarP attributs;
+} Objet, *ObjetP;
+  
 
 enum Relop {
   EQU,
