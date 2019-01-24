@@ -38,4 +38,4 @@ lex_l.c : gram_y.h proj.h anal_lex.l
 .Phony: clean
 # commande pour tester grammaire : bison -v -b gram_y -d gram.y
 clean:
-	rm -f *~ tp.exe* ./tp *.o lex_l.o gram_y.* test_lex lex_l.c gram_y.output
+	rm -f *~ tp.exe* ./tp *.o lex_l.o gram_y.* test_lex proj lex_l.c gram_y.output
