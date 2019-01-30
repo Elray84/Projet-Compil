@@ -18,6 +18,8 @@
 %token RES
 %token CONCAT
 
+%token <T>
+
 %{#include "proj.h"     /* les definition des types et les etiquettes des noeuds */
 
 extern int yylex();	/* fournie par Flex */
@@ -32,9 +34,8 @@ extern void yyerror();  /* definie dans tp.c */
 %left '.'
 
 %%
-programme : L Bloc;
-
-/*printAST($1, $2);*/
+programme : L Bloc /*{ printAST($1, $2); }*/
+;
 
 L : /*{ $$ = NIL(Tree); }*/
 | DeclStruct L /*{ $$ = makeTree(hLST, 2 $1, $2); }*/

@@ -98,6 +98,7 @@ typedef struct _Var
   	struct _Objet *objet;
   	struct _ObjetIsole *objetIsole;
     VarDeclP varBase;
+    struct _Class *classe;
   } u;
 } Var, *VarP;
 
@@ -157,6 +158,8 @@ typedef union
   int I;	/* valeur entiere */
   VarDeclP D;	/* liste de paires (variable, valeur) */
   TreeP T;	/* AST */
+  VarP V; /* Environnement : variable primitive, instance d'une classe, classe ou objet isolé */
+  Meth
 } YYSTYPE;
 
 
