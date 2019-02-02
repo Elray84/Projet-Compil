@@ -18,7 +18,10 @@
 %token RES
 %token CONCAT
 
-%token <T>
+%type <T> L Bloc DeclStruct LParamOpt LParam DeclClassBody DeclObjectBody LDeclFields Herit Field Super LArgOpt LArg Arg ListOptMethods Over LInstructions Instruction Expression EnvoiOuSelect Envoi Selection ExpressionBase ReturnType LDecl Decl LEOpt LE
+%type <V> DeclClass DeclObject Param Instantiation
+%type <M> ClassConstruct ObjectConstruct Method
+
 
 %{#include "proj.h"     /* les definition des types et les etiquettes des noeuds */
 

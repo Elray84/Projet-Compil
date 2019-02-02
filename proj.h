@@ -64,8 +64,10 @@ typedef struct _Tree {
   short op;         /* etiquette de l'operateur courant */
   short nbChildren; /* nombre de sous-arbres */
   union {
-    char *str;      /* valeur de la feuille si op = ID */
-    int val;        /* valeur de la feuille si op = CST */
+    char *str;       /* ID (pas decl) OU string */
+    int val;         /* int cst */
+    struct _Meth *met;       /* Methode decl */
+    struct _Var *var;        /* Variable decl */
     struct _Tree **children; /* tableau des sous-arbres d'un noeud interne */
   } u;
 } Tree, *TreeP;
@@ -156,10 +158,10 @@ typedef union
   enum Relop R; /* Contenu du relop */
   char *S;	/* chaine de caractere */
   int I;	/* valeur entiere */
-  VarDeclP D;	/* liste de paires (variable, valeur) */
+  /*VarDeclP D;	 liste de paires (variable, valeur) */
   TreeP T;	/* AST */
   VarP V; /* Environnement : variable primitive, instance d'une classe, classe ou objet isolé */
-  Meth
+  Meth M; /* Méthode */
 } YYSTYPE;
 
 

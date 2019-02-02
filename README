@@ -1,4 +1,5 @@
 Je m'en sers comme bloc note pour l'instant :
 
-<T> programme L Bloc
-<V> 
+<T> programme L Bloc DeclStruct LParamOpt LParam DeclClassBody DeclObjectBody LDeclFields Herit Field Super LArgOpt LArg Arg ListOptMethods Over LInstructions Instruction Expression EnvoiOuSelect Envoi Selection ExpressionBase ReturnType LDecl Decl LEOpt LE
+<V> DeclClass DeclObject Param Instantiation
+<M> ClassConstruct ObjectConstruct Method
