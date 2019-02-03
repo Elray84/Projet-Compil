@@ -84,58 +84,55 @@ enum Type {
   string
 };
 
+enum VarType{
+  objet,
+  objetIsole,
+  varBase,
+  classe,
+  methode
+};
 
 typedef struct _Decl
-{ char *name;
-  int val;
-  int rank;
-  struct _Decl *next;
+{ int val;
   enum Type type;
 } VarDecl, *VarDeclP;
 
 typedef struct _Var
-{ int type; /* Etiquette objet ou variable normale */
+{ char *name;
+  int rank;
+  enum VarType type; /* Etiquette objet ou variable normale */
   union
   {
   	struct _Objet *objet;
   	struct _ObjetIsole *objetIsole;
     VarDeclP varBase;
     struct _Class *classe;
+    struct _Meth *methode;
   } u;
+  struct _Var *next;
 } Var, *VarP;
 
 typedef struct _Meth
-{ char *name;
-  int constr;
-  int rank;
+{ int constr;
   VarP decls;
   TreeP ListInstr;
-  struct _Meth *next;
 } Meth, *MethP;
 
 
 typedef struct _Class
-{ char *name;
-  int rank;
-  struct _Class *superClass;
-  struct _Class *next;
+{ struct _Class *superClass;
   MethP meths;
   VarP decls;
   // AttributP attributs;
 } Class, *ClassP;
 
 typedef struct _ObjetIsole
-{ char *name;
-  int rank;
-  VarP decls;
+{ VarP decls;
   MethP meths;
-  struct _ObjetIsole *next;
 } ObjetIsole, *ObjetIsoleP;
 
 typedef struct _Objet
-{ char *name;
-  int rank;
-  ClassP oClass;
+{ ClassP oClass;
   VarP attributs;
 } Objet, *ObjetP;
 
@@ -180,14 +177,14 @@ TreeP makeTree(short op, int nbChildren, ...);	    /* noeud interne */
 void printAST(TreeP decls, TreeP main);
 
 /* gestion des declarations et traitement de la portee */
-VarDeclP addToScope(VarDeclP list, VarDeclP nouv);
-VarDeclP declVar(char *name, TreeP tree, VarDeclP decls);
+VarP addToScope(VarP list, VarP nouv);
+VarP declVar(char *name, TreeP tree, VarP decls);
 
 /* evaluateur pour les parties declarations */
-VarDeclP evalDecls (TreeP tree);
-int eval(TreeP tree, VarDeclP decls);
+VarP evalDecls (TreeP tree);
+int eval(TreeP tree, VarP decls);
 
 /* evaluateur pour l'expression principale. Elle prend aussi en parametre
  * la liste des couples (variable, valeur) deduite des declarations
  */
-int evalMain(TreeP tree, VarDeclP decls);
+int evalMain(TreeP tree, VarP decls);
