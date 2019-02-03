@@ -19,9 +19,7 @@
 %token CONCAT
 
 %type <T> L Bloc DeclStruct LParamOpt LParam DeclClassBody DeclObjectBody LDeclFields Herit Field Super LArgOpt LArg Arg ListOptMethods Over LInstructions Instruction Expression EnvoiOuSelect Envoi Selection ExpressionBase ReturnType LDecl Decl LEOpt LE
-%type <V> DeclClass DeclObject Param Instantiation
-%type <M> ClassConstruct ObjectConstruct Method
-
+%type <V> DeclClass DeclObject Param Instantiation ClassConstruct ObjectConstruct Method
 
 %{#include "proj.h"     /* les definition des types et les etiquettes des noeuds */
 
@@ -51,6 +49,7 @@ DeclStruct : DeclClass /*{ $$ = $1); }*/
 
 
 DeclClass : CLA COI '(' LParamOpt ')' Herit IS '{' DeclClassBody '}'
+ /*{$$= makeTree(hCLA, 4, $2, $4, $6, $9);}*/
 ;
 
 DeclObject : OBJ COI IS '{' DeclObjectBody '}'
@@ -166,14 +165,13 @@ Expression : Expression RELOP Expression
  | THI
  | SPR
  | RES
- | CST /*{ $$ = makeLeafInt(hCST, $1); }*/
+ | CST /*{ if(CST est une string){} else {}
+   $$ = makeLeafInt(hCST, $1); }*/
  | Instantiation
  ;
 
 Instantiation : NEW COI '(' LEOpt ')'
 ;
-
-
 
 ReturnType :
 | ':' COI
@@ -198,28 +196,3 @@ LEOpt :
 LE : Expression
 | Expression ',' LE /*{ $$ = makeTree(hLST, 2, $1, $3); }*/
 ;
-
-/* expr : If bexpr Then expr Else expr
-
-| expr ADD expr
-| expr SUB expr
-| expr MUL expr
-| expr DIV expr
-| ADD expr %prec unary */
-/* Pour l'AST on traite le - unaire comme un - binaire , comme cela on ne
- * s'en soucie plus dans la suite
- */
- /*
-| SUB expr %prec unary
-| CST
-| ID
-| '(' expr ')'
-;
-
-/* Expression booleenne seulement presente dans un IF */
-/* bexpr : expr RELOP expr
-| '(' bexpr ')'
-; */
-/* bexpr : expr RELOP expr
-| '(' bexpr ')'
-; */

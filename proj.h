@@ -66,7 +66,6 @@ typedef struct _Tree {
   union {
     char *str;       /* ID (pas decl) OU string */
     int val;         /* int cst */
-    struct _Meth *met;       /* Methode decl */
     struct _Var *var;        /* Variable decl */
     struct _Tree **children; /* tableau des sous-arbres d'un noeud interne */
   } u;
@@ -93,13 +92,19 @@ enum VarType{
 };
 
 typedef struct _Decl
-{ int val;
+{
+  union{
+    int val;
+    char *str;
+  } u;
   enum Type type;
 } VarDecl, *VarDeclP;
 
+/* Var : déclaration de variable étendue à toutes les "variables" possibles (objets, classes, méthodes,...) */
 typedef struct _Var
 { char *name;
   int rank;
+  int attribute; /* booléen "est un attribut d'une classe" */
   enum VarType type; /* Etiquette objet ou variable normale */
   union
   {
@@ -113,17 +118,19 @@ typedef struct _Var
 } Var, *VarP;
 
 typedef struct _Meth
-{ int constr;
+{ char *name;
+  int constr;
   VarP decls;
   TreeP ListInstr;
+  struct _Meth *next;
 } Meth, *MethP;
 
 
 typedef struct _Class
 { struct _Class *superClass;
   MethP meths;
-  VarP decls;
-  // AttributP attributs;
+  VarP attrs; /*attributs de la classe*/
+  VarP params; /* paramètre non attributs */
 } Class, *ClassP;
 
 typedef struct _ObjetIsole
@@ -151,14 +158,14 @@ enum Relop {
  * associees aux productions de la grammaire.
 */
 typedef union
-{ char C;	/* caractere isole */
+{ //char C;	/* caractere isole */
   enum Relop R; /* Contenu du relop */
   char *S;	/* chaine de caractere */
   int I;	/* valeur entiere */
   /*VarDeclP D;	 liste de paires (variable, valeur) */
-  TreeP T;	/* AST */
-  VarP V; /* Environnement : variable primitive, instance d'une classe, classe ou objet isolé */
-  Meth M; /* Méthode */
+  /*TreeP T;	// AST
+  VarP V; // Environnement : variable primitive, instance d'une classe, classe ou objet isolé
+  Meth M; // Méthode */
 } YYSTYPE;
 
 
@@ -168,9 +175,14 @@ typedef union
 
 	/* Prototypes des fonctions (partiellement) mises a disposition */
 
+/* utilitaires */
+MethP concatMeth(MethP liste1, MethP liste2);
+VarP concatVar(VarP liste1, VarP liste2);
+
 /* construction pour les AST */
 TreeP makeLeafStr(short op, char *str); 	    /* feuille (string) */
 TreeP makeLeafInt(short op, int val);	            /* feuille (int) */
+TreeP makeLeafVar(short op, VarP var);          /* feuille declVar */
 TreeP makeTree(short op, int nbChildren, ...);	    /* noeud interne */
 
 /* Impression des AST */
@@ -178,7 +190,9 @@ void printAST(TreeP decls, TreeP main);
 
 /* gestion des declarations et traitement de la portee */
 VarP addToScope(VarP list, VarP nouv);
-VarP declVar(char *name, TreeP tree, VarP decls);
+VarP declInt(char *name, int val, int attribut, int rank);
+VarP declStr(char *name, char *str, int attribut, int rank);
+VarP declClass(char *name, VarP paramConstr, VarP fromBody, int herit,...);
 
 /* evaluateur pour les parties declarations */
 VarP evalDecls (TreeP tree);

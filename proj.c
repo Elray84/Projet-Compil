@@ -155,6 +155,13 @@ TreeP makeLeafInt(short op, int val) {
   return(tree);
 }
 
+/* Constructeur de feuille dont la valeur est une déclaration de variable */
+TreeP makeLeafVar(short op, VarP var){
+  TreeP tree = makeNode(0, op);
+  tree->u.var = var;
+  return(tree);
+}
+
 
 /* Verifie que nouv n'apparait pas deja dans list. l'ajoute en tete et
  * renvoie la nouvelle liste
@@ -242,16 +249,78 @@ bool checkScope(TreeP tree, VarP lvar) {
     exit(UNEXPECTED);
   }
 }
-
-
-VarP declVar(char *name, TreeP tree, VarP decls) {
-  VarP pvar = NEW(1, Var);
-  pvar->name = name; pvar->next = NIL(Var);
-  checkScope(tree, decls);
-  // genCode(tree, decls);
-  return addToScope(decls, pvar);
+/* Pour les déclarations, on ne vérifie pas si les variables sont déjà dans l'environnement etc., ces vérifications seront effectuées après la création des arbres */
+/* Déclaration d'une variable int */
+VarP declInt(char *name, int val, int attribut, int rank){
+  VarDeclP pvar = NEW(1, VarDecl);
+  VarP var = NEW(1, Var);
+  var->name = name;
+  var->type = varBase;
+  pvar->type = integ;
+  pvar->u.val = val;
+  var->u.varBase = pvar;
+  var->attribute = attribut;
+  var->rank = rank;
+  return(var);
 }
 
+/* Déclaration d'une variable string */
+VarP declStr(char *name, char *str, int attribut, int rank){
+  VarDeclP pvar = NEW(1, VarDecl);
+  VarP var = NEW(1, Var);
+  var->name = name;
+  var->type = varBase;
+  pvar->type = string;
+  pvar->u.str = str;
+  var->u.varBase = pvar;
+  var->attribute = attribut;
+  var->rank = rank;
+  return(var);
+}
+
+/* Déclaration d'une classe */
+VarP declClass(char *name, VarP paramConstr, VarP fromBody, int herit,...){
+  va_list args;
+  VarP result = NEW(1, Var);
+  ClassP pClass = NEW(1,Class);
+  result->type = classe;
+  result->name = name;
+  VarP attrs = paramConstr;
+  VarP params = NIL(Var);
+  MethP meths = NIL(Meth);
+  VarP body = fromBody;
+  do{
+    if(body->type == methode){
+      meths = concatMeth(meths, body->u.methode);
+    }
+    else if(body->attribute){
+      attrs = concatVar(attrs, body);
+    }
+    else params = concatVar(params, body);
+  } while(body->next);
+  pClass->attrs = attrs;
+  pClass->params = params;
+  pClass->meths = meths;
+  va_start(args, herit);
+  if(herit) pClass->superClass = va_arg(args, ClassP);
+  va_end(args);
+  result->u.classe = pClass;
+  return(result);
+}
+
+MethP concatMeth(MethP liste1, MethP liste2){
+  if(liste1 == NIL(Meth)) return liste2;
+  if(liste2 == NIL(Meth)) return liste1;
+  liste1->next = liste2;
+  return liste1;
+}
+
+VarP concatVar(VarP liste1, VarP liste2){
+  if(liste1 == NIL(Var)) return liste2;
+  if(liste2 == NIL(Var)) return liste1;
+  liste1->next = liste2;
+  return liste1;
+}
 
 
 
@@ -293,7 +362,8 @@ VarP genCodeAff (TreeP tree, VarP decls) {
      * cette adresse dans la pile
      */
     TreeP fils = getChild(tree, 1);
-    return declVar(getChild(tree, 0)->u.str, fils, decls);
+    fils = fils;
+    return NIL(Var);//declVar(getChild(tree, 0)->u.str, fils, decls);
   }
 }
 
