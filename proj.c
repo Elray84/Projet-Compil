@@ -10,7 +10,7 @@ extern int yyparse();
 extern int yylineno;
 
 extern char *strdup(const char *s);
-extern int genCode(TreeP, VarDeclP);
+extern int genCode(TreeP, VarP);
 
 /* Niveau de 'verbosite'.
  * Par defaut, n'imprime que le resultat et les messages d'erreur
@@ -155,13 +155,20 @@ TreeP makeLeafInt(short op, int val) {
   return(tree);
 }
 
+/* Constructeur de feuille dont la valeur est une déclaration de variable */
+TreeP makeLeafVar(short op, VarP var){
+  TreeP tree = makeNode(0, op);
+  tree->u.var = var;
+  return(tree);
+}
+
 
 /* Verifie que nouv n'apparait pas deja dans list. l'ajoute en tete et
  * renvoie la nouvelle liste
  */
-VarDeclP addToScope(VarDeclP list, VarDeclP nouv) {
-  VarDeclP p; int i;
-  for(p=list, i = 0; p != NIL(VarDecl); p = p->next, i = i+1) {
+VarP addToScope(VarP list, VarP nouv) {
+  VarP p; int i;
+  for(p=list, i = 0; p != NIL(Var); p = p->next, i = i+1) {
     if (! strcmp(p->name, nouv->name)) {
       fprintf(stderr, "Error: Multiple declaration in the same scope of %s\n",
 	      p->name);
@@ -178,11 +185,11 @@ VarDeclP addToScope(VarDeclP list, VarDeclP nouv) {
 
 
 /* Construit le squelette d'un element de description d'une variable */
-VarDeclP makeVar(char *name) {
+/*VarDeclP makeVar(char *name) {
   VarDeclP res = NEW(1, VarDecl);
   res->name = name; res->next = NIL(VarDecl);
   return(res);
-}
+}*/
 
 
 /**
@@ -205,13 +212,13 @@ char *getLabel() {
  * Le champ 'val' de la structure VarDecl n'est pas significatif
  * puisqu'on n'a encore rien evalue.
  */
-bool checkScope(TreeP tree, VarDeclP lvar) {
-  VarDeclP p; char *name;
+bool checkScope(TreeP tree, VarP lvar) {
+  VarP p; char *name;
   if (tree == NIL(Tree)) { return TRUE; }
   switch (tree->op) {
   case hID :
     name = tree->u.str;
-    for(p=lvar; p != NIL(VarDecl); p = p->next) {
+    for(p=lvar; p != NIL(Var); p = p->next) {
       if (! strcmp(p->name, name)) { return TRUE; }
     }
     fprintf(stderr, "\nError: undeclared variable %s\n", name);
@@ -242,15 +249,79 @@ bool checkScope(TreeP tree, VarDeclP lvar) {
     exit(UNEXPECTED);
   }
 }
-
-
-VarDeclP declVar(char *name, TreeP tree, VarDeclP decls) {
+/* Pour les déclarations, on ne vérifie pas si les variables sont déjà dans l'environnement etc., ces vérifications seront effectuées après la création des arbres */
+/* Déclaration d'une variable int */
+VarP declInt(char *name, int val, int attribut, int rank){
   VarDeclP pvar = NEW(1, VarDecl);
-  pvar->name = name; pvar->next = NIL(VarDecl);
-  checkScope(tree, decls);
-  // genCode(tree, decls);
-  return addToScope(decls, pvar);
+  VarP var = NEW(1, Var);
+  var->name = name;
+  var->type = varBase;
+  pvar->type = integ;
+  pvar->u.val = val;
+  var->u.varBase = pvar;
+  var->attribute = attribut;
+  var->rank = rank;
+  return(var);
 }
+
+/* Déclaration d'une variable string */
+VarP declStr(char *name, char *str, int attribut, int rank){
+  VarDeclP pvar = NEW(1, VarDecl);
+  VarP var = NEW(1, Var);
+  var->name = name;
+  var->type = varBase;
+  pvar->type = string;
+  pvar->u.str = str;
+  var->u.varBase = pvar;
+  var->attribute = attribut;
+  var->rank = rank;
+  return(var);
+}
+
+/* Déclaration d'une classe */
+VarP declClass(char *name, VarP paramConstr, VarP fromBody, int herit,...){
+  va_list args;
+  VarP result = NEW(1, Var);
+  ClassP pClass = NEW(1,Class);
+  result->type = classe;
+  result->name = name;
+  VarP attrs = paramConstr;
+  VarP params = NIL(Var);
+  MethP meths = NIL(Meth);
+  VarP body = fromBody;
+  do{
+    if(body->type == methode){
+      meths = concatMeth(meths, body->u.methode);
+    }
+    else if(body->attribute){
+      attrs = concatVar(attrs, body);
+    }
+    else params = concatVar(params, body);
+  } while(body->next);
+  pClass->attrs = attrs;
+  pClass->params = params;
+  pClass->meths = meths;
+  va_start(args, herit);
+  if(herit) pClass->superClass = va_arg(args, ClassP);
+  va_end(args);
+  result->u.classe = pClass;
+  return(result);
+}
+
+MethP concatMeth(MethP liste1, MethP liste2){
+  if(liste1 == NIL(Meth)) return liste2;
+  if(liste2 == NIL(Meth)) return liste1;
+  liste1->next = liste2;
+  return liste1;
+}
+
+VarP concatVar(VarP liste1, VarP liste2){
+  if(liste1 == NIL(Var)) return liste2;
+  if(liste2 == NIL(Var)) return liste1;
+  liste1->next = liste2;
+  return liste1;
+}
+
 
 
 /* Constructeur de feuille dont la valeur est une chaine de caracteres
@@ -282,7 +353,7 @@ TreeP makeLeafStr(short op, char *str) {
 */
 
 
-VarDeclP genCodeAff (TreeP tree, VarDeclP decls) {
+VarP genCodeAff (TreeP tree, VarP decls) {
   if (tree == NIL(Tree) || tree->op != hDCL) {
     exit(UNEXPECTED);
   } else {
@@ -291,18 +362,19 @@ VarDeclP genCodeAff (TreeP tree, VarDeclP decls) {
      * cette adresse dans la pile
      */
     TreeP fils = getChild(tree, 1);
-    return declVar(getChild(tree, 0)->u.str, fils, decls);
+    fils = fils;
+    return NIL(Var);//declVar(getChild(tree, 0)->u.str, fils, decls);
   }
 }
 
 
-VarDeclP genCodeDecls (TreeP tree) {
+VarP genCodeDecls (TreeP tree) {
   if (tree == NIL(Tree)) {
     printf("START\n");    /* initialisation des registres internes */
-    return NIL(VarDecl);
+    return NIL(Var);
   }
   else {
-    TreeP g, d; VarDeclP res;
+    TreeP g, d; VarP res;
     g = getChild(tree, 0);
     d = getChild(tree, 1);
     res = genCodeDecls(g);
@@ -316,7 +388,7 @@ VarDeclP genCodeDecls (TreeP tree) {
  * le premier fils represente la condition,
  * les deux autres fils correspondent respectivement aux parties then et else.
  */
-int genCodeIf(TreeP tree, VarDeclP decls) {
+int genCodeIf(TreeP tree, VarP decls) {
   char * etiFalse = getLabel();
   char * etiFin = getLabel();
   genCode(getChild(tree, 0), decls);
@@ -330,9 +402,9 @@ int genCodeIf(TreeP tree, VarDeclP decls) {
 }
 
 
-int getLocVar(char *name, VarDeclP decls) {
-  VarDeclP l = decls;
-  while (l != NIL(VarDecl)) {
+int getLocVar(char *name, VarP decls) {
+  VarP l = decls;
+  while (l != NIL(Var)) {
     if (! strcmp(name, l->name)) { return l->rank; }
     else { l = l->next; }
   }
@@ -348,7 +420,7 @@ int getLocVar(char *name, VarDeclP decls) {
  * decls: l'environnement, c'est à dire la liste des variables que l'expression
  * a le droit de referencer.
  */
-int genCode(TreeP tree, VarDeclP decls) {
+int genCode(TreeP tree, VarP decls) {
   if (tree == NIL(Tree)) { exit(UNEXPECTED); }
   switch (tree->op) {
  case hID:
@@ -413,7 +485,7 @@ int genCode(TreeP tree, VarDeclP decls) {
  * tree : expression comprise entre le BEGIN et le END
  * decls : l'environnement forme par les variables declarees
  */
-int genCodeMain(TreeP tree, VarDeclP decls) {
+int genCodeMain(TreeP tree, VarP decls) {
   /* verifie les ident utilises dans l'expression finale */
   checkScope(tree, decls);
   if (noEval) {

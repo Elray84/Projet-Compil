@@ -55,7 +55,7 @@ typedef int bool;
 #define hCOI   29
 
 #define hDCL 30 /* TODO a remove c'est juste pour indiquer une declaration pour tester */
-
+#define hLST 31 /* l'etiquette des arbres liste */
 
 		/* Definition d'un arbre de syntaxe abstraite */
 
@@ -64,8 +64,9 @@ typedef struct _Tree {
   short op;         /* etiquette de l'operateur courant */
   short nbChildren; /* nombre de sous-arbres */
   union {
-    char *str;      /* valeur de la feuille si op = ID */
-    int val;        /* valeur de la feuille si op = CST */
+    char *str;       /* ID (pas decl) OU string */
+    int val;         /* int cst */
+    struct _Var *var;        /* Variable decl */
     struct _Tree **children; /* tableau des sous-arbres d'un noeud interne */
   } u;
 } Tree, *TreeP;
@@ -82,29 +83,43 @@ enum Type {
   string
 };
 
+enum VarType{
+  objet,
+  objetIsole,
+  varBase,
+  classe,
+  methode
+};
 
 typedef struct _Decl
-{ char *name;
-  int val;
-  int rank;
-  struct _Decl *next;
+{
+  union{
+    int val;
+    char *str;
+  } u;
   enum Type type;
 } VarDecl, *VarDeclP;
 
+/* Var : déclaration de variable étendue à toutes les "variables" possibles (objets, classes, méthodes,...) */
 typedef struct _Var
-{ int type; /* Etiquette objet ou variable normale */
+{ char *name;
+  int rank;
+  int attribute; /* booléen "est un attribut d'une classe" */
+  enum VarType type; /* Etiquette objet ou variable normale */
   union
   {
   	struct _Objet *objet;
   	struct _ObjetIsole *objetIsole;
     VarDeclP varBase;
+    struct _Class *classe;
+    struct _Meth *methode;
   } u;
+  struct _Var *next;
 } Var, *VarP;
 
 typedef struct _Meth
 { char *name;
   int constr;
-  int rank;
   VarP decls;
   TreeP ListInstr;
   struct _Meth *next;
@@ -112,30 +127,22 @@ typedef struct _Meth
 
 
 typedef struct _Class
-{ char *name;
-  int rank;
-  struct _Class *superClass;
-  struct _Class *next;
+{ struct _Class *superClass;
   MethP meths;
-  VarP decls;
-  // AttributP attributs;
+  VarP attrs; /*attributs de la classe*/
+  VarP params; /* paramètre non attributs */
 } Class, *ClassP;
 
 typedef struct _ObjetIsole
-{ char *name;
-  int rank;
-  VarP decls;
+{ VarP decls;
   MethP meths;
-  struct _ObjetIsole *next;
 } ObjetIsole, *ObjetIsoleP;
 
 typedef struct _Objet
-{ char *name;
-  int rank;
-  ClassP oClass;
+{ ClassP oClass;
   VarP attributs;
 } Objet, *ObjetP;
-  
+
 
 enum Relop {
   EQU,
@@ -151,12 +158,14 @@ enum Relop {
  * associees aux productions de la grammaire.
 */
 typedef union
-{ char C;	/* caractere isole */
+{ //char C;	/* caractere isole */
   enum Relop R; /* Contenu du relop */
   char *S;	/* chaine de caractere */
   int I;	/* valeur entiere */
-  VarDeclP D;	/* liste de paires (variable, valeur) */
-  TreeP T;	/* AST */
+  /*VarDeclP D;	 liste de paires (variable, valeur) */
+  /*TreeP T;	// AST
+  VarP V; // Environnement : variable primitive, instance d'une classe, classe ou objet isolé
+  Meth M; // Méthode */
 } YYSTYPE;
 
 
@@ -166,23 +175,30 @@ typedef union
 
 	/* Prototypes des fonctions (partiellement) mises a disposition */
 
+/* utilitaires */
+MethP concatMeth(MethP liste1, MethP liste2);
+VarP concatVar(VarP liste1, VarP liste2);
+
 /* construction pour les AST */
 TreeP makeLeafStr(short op, char *str); 	    /* feuille (string) */
 TreeP makeLeafInt(short op, int val);	            /* feuille (int) */
+TreeP makeLeafVar(short op, VarP var);          /* feuille declVar */
 TreeP makeTree(short op, int nbChildren, ...);	    /* noeud interne */
 
 /* Impression des AST */
 void printAST(TreeP decls, TreeP main);
 
 /* gestion des declarations et traitement de la portee */
-VarDeclP addToScope(VarDeclP list, VarDeclP nouv);
-VarDeclP declVar(char *name, TreeP tree, VarDeclP decls);
+VarP addToScope(VarP list, VarP nouv);
+VarP declInt(char *name, int val, int attribut, int rank);
+VarP declStr(char *name, char *str, int attribut, int rank);
+VarP declClass(char *name, VarP paramConstr, VarP fromBody, int herit,...);
 
 /* evaluateur pour les parties declarations */
-VarDeclP evalDecls (TreeP tree);
-int eval(TreeP tree, VarDeclP decls);
+VarP evalDecls (TreeP tree);
+int eval(TreeP tree, VarP decls);
 
 /* evaluateur pour l'expression principale. Elle prend aussi en parametre
  * la liste des couples (variable, valeur) deduite des declarations
  */
-int evalMain(TreeP tree, VarDeclP decls);
+int evalMain(TreeP tree, VarP decls);

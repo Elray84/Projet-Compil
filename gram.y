@@ -18,6 +18,9 @@
 %token RES
 %token CONCAT
 
+%type <T> L Bloc DeclStruct LParamOpt LParam DeclClassBody DeclObjectBody LDeclFields Herit Field Super LArgOpt LArg Arg ListOptMethods Over LInstructions Instruction Expression EnvoiOuSelect Envoi Selection ExpressionBase ReturnType LDecl Decl LEOpt LE
+%type <V> DeclClass DeclObject Param Instantiation ClassConstruct ObjectConstruct Method
+
 %{#include "proj.h"     /* les definition des types et les etiquettes des noeuds */
 
 extern int yylex();	/* fournie par Flex */
@@ -32,30 +35,31 @@ extern void yyerror();  /* definie dans tp.c */
 %left '.'
 
 %%
-programme : L Bloc;
+programme : L Bloc /*{ printAST($1, $2); }*/
+;
 
-
-L :
-| DeclStruct L
+L : /*{ $$ = NIL(Tree); }*/
+| DeclStruct L /*{ $$ = makeTree(hLST, 2 $1, $2); }*/
 ;
 
 
-DeclStruct : DeclClass
-| DeclObject
+DeclStruct : DeclClass /*{ $$ = $1); }*/
+| DeclObject /*{ $$ = $1); }*/
 ;
 
 
 DeclClass : CLA COI '(' LParamOpt ')' Herit IS '{' DeclClassBody '}'
+ /*{$$= makeTree(hCLA, 4, $2, $4, $6, $9);}*/
 ;
 
 DeclObject : OBJ COI IS '{' DeclObjectBody '}'
 ;
 
 LParamOpt : LParam
-|
+| /*{ $$ = NIL(Tree);}*/
 ;
 
-LParam : Param ',' LParam
+LParam : Param ',' LParam /*{ $$ = makeTree(hLST, 2, $1, $3);}*/
 | Param
 ;
 
@@ -76,8 +80,8 @@ DeclClassBody : LDeclFields ClassConstruct ListOptMethods
 DeclObjectBody : LDeclFields ObjectConstruct ListOptMethods
 ;
 
-LDeclFields :
-| Field LDeclFields
+LDeclFields : /*{ $$ = NIL(Tree); }*/
+| Field LDeclFields /*{ $$ = makeTree(hLST, 2, $1, $2);}*/
 ;
 
 Field : ID ':' COI ';'
@@ -98,15 +102,15 @@ LArgOpt :
 | LArg
 ;
 
-LArg : Arg ',' LArg
-| Arg
+LArg : Arg ',' LArg /*{ $$ = makeTree(hLST, 2, $1, $3); }*/
+| Arg /*{ $$ = $1 }*/
 ;
 
 Arg : Expression
 ;
 
-ListOptMethods :
-| Method ListOptMethods
+ListOptMethods : /*{ $$ = NIL(Tree);}*/
+| Method ListOptMethods /*{ $$ = makeTree(hLST, 2, $1, $2);}*/
 ;
 
 Method : Over DEF ID '('LParamOpt')'  ':' COI AFF Expression
@@ -117,8 +121,8 @@ Over :
 | OVR
 ;
 
-LInstructions :
-| Instruction LInstructions;
+LInstructions : /*{ $$ = NIL(Tree);}*/
+| Instruction LInstructions; /*{ $$ = makeTree(hLST, 2, $1, $2);}*/
 
 Instruction : Expression ';'
 | Bloc
@@ -128,12 +132,12 @@ Instruction : Expression ';'
 ;
 
 Expression : Expression RELOP Expression
-| Expression ADD Expression
-| Expression SUB Expression
-| Expression MUL Expression
-| Expression DIV Expression
-| ADD Expression %prec unary
-| SUB Expression %prec unary
+| Expression ADD Expression /*{ $$ = makeTree(hADD, 2, $1, $3);}*/
+| Expression SUB Expression /*{ $$ = makeTree(hSUB, 2, $1, $3);}*/
+| Expression MUL Expression /*{ $$ = makeTree(hMUL, 2, $1, $3);}*/
+| Expression DIV Expression /*{ $$ = makeTree(hDIV, 2, $1, $3);}*/
+| ADD Expression %prec unary /*{ $$ = $2; }*/
+| SUB Expression %prec unary /*{ $$ = makeTree(hSUB, 2, makeLeafInt(CONST, 0), $2); }*/
 | Expression CONCAT Expression
 | EnvoiOuSelect
 /*| ExpressionNonAffectable*/
@@ -155,20 +159,19 @@ Expression : Expression RELOP Expression
  | ExpressionBase*/
  ;
 
- ExpressionBase : ID
- | '(' Expression ')'
+ ExpressionBase : ID /*{ $$ = makeLeafStr(hID, $1); }*/
+ | '(' Expression ')' /*{ $$ = $2; }*/
  | '(' COI ExpressionBase')'
  | THI
  | SPR
  | RES
- | CST
+ | CST /*{ if(CST est une string){} else {}
+   $$ = makeLeafInt(hCST, $1); }*/
  | Instantiation
  ;
 
 Instantiation : NEW COI '(' LEOpt ')'
 ;
-
-
 
 ReturnType :
 | ':' COI
@@ -178,8 +181,8 @@ Bloc : '{' LInstructions '}'
 | '{' Decl LDecl IS Instruction LInstructions '}'
 ;
 
-LDecl :
-| Decl LDecl
+LDecl :/*{ $$ = NIL(Tree);}*/
+| Decl LDecl /*{ $$ = makeTree(hLST, 2, $1, $2); }*/
 ;
 
 Decl: ID ':' COI ';'
@@ -191,5 +194,5 @@ LEOpt :
 ;
 
 LE : Expression
-| Expression ',' LE
+| Expression ',' LE /*{ $$ = makeTree(hLST, 2, $1, $3); }*/
 ;
