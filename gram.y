@@ -105,7 +105,7 @@ LArg : Arg ',' LArg
 Arg : Expression
 ;
 
-ListOptMethods : 
+ListOptMethods :
 | Method ListOptMethods
 ;
 
@@ -193,28 +193,3 @@ LEOpt :
 LE : Expression
 | Expression ',' LE
 ;
-
-/* expr : If bexpr Then expr Else expr
-
-| expr ADD expr
-| expr SUB expr
-| expr MUL expr
-| expr DIV expr
-| ADD expr %prec unary */
-/* Pour l'AST on traite le - unaire comme un - binaire , comme cela on ne
- * s'en soucie plus dans la suite
- */
- /*
-| SUB expr %prec unary
-| CST
-| ID
-| '(' expr ')'
-;
-
-/* Expression booleenne seulement presente dans un IF */
-/* bexpr : expr RELOP expr
-| '(' bexpr ')'
-; */
-/* bexpr : expr RELOP expr
-| '(' bexpr ')'
-; */
